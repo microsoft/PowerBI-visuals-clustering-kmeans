@@ -1,0 +1,24 @@
+{
+  "visual": {
+    "name": "kmeansVisual1",
+    "displayName": "kmeans clustering",
+    "guid": "PBI_CV_7BD71041_0FDE_423E_BAB2_9804ACC742E8",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.2.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}
