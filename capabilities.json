@@ -60,7 +60,7 @@
         }
       }
     },
-    "settings1":{
+    "settings_prepocessing_params":{
         "displayName": "Data preprocessing",
         "properties": {
            "show": {
@@ -82,7 +82,7 @@
           }
         }
     },
-      "settings2":{
+      "settings_clusterNum_params":{
         "displayName": "Parameters for clusters definition",
         "description": "Parameters for tuning the number of clusters",
         "properties": {
@@ -166,7 +166,7 @@
             }
         }
     },
-    "settings3":{
+    "settings_viz_params":{
         "displayName": "Visual appearance of clustering",
         "properties": {
           "show": {
@@ -204,7 +204,7 @@
           }
         }
     },
-    "settings4":{
+    "settings_labeling_params":{
         "displayName": "Points labeling",
         "properties": {
           "show": {
@@ -239,7 +239,7 @@
           }       
         }
     },
-    "settings5":{
+    "settings_representative_params":{
         "displayName": "Cluster representative labeling",
         "description": "Add label to the most typical representative of each cluster",
         "properties": {
@@ -264,7 +264,7 @@
 
         }
     },
-    "settings6":{
+    "settings_legend_params":{
         "displayName": "Legend",
          "description": "Parameters for the legend area of the clustering plot",
         "properties": {
@@ -305,7 +305,7 @@
             } 
         }
     },
-    "settings7":{
+    "settings_additional_params":{
         "displayName": "Additional clustering parameters",
         "description": "Parameters for advanced users",
         "properties": {

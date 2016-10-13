@@ -24,26 +24,21 @@
  *  THE SOFTWARE.
  */
 module powerbi.extensibility.visual {
-
-    export interface ScriptResult {
-        source: string;
-        provider: string;
-    }
     
-    interface VisualSettings1 {//data preprocessing
+    interface VisualSettingsPreprocessingParams {//data preprocessing
         show: boolean;
         scaleData: boolean;      
         applyPCA: boolean;            
     }
 
-     interface VisualSettings2 {//clustering algo
+     interface VisualSettingsClusterNumParams {//clustering algo
         show: boolean;
         numOfClusters: string;
         numClustersMethods: string;
 
      }
 
-     interface VisualSettings3 {//appearance 
+     interface VisualSettingsVizParams {//appearance 
         show: boolean;
         drawEllipse: boolean;
         drawConvexHull: boolean;
@@ -52,7 +47,7 @@ module powerbi.extensibility.visual {
         weight: number;
        
      }
-     interface VisualSettings4 {//points labeling 
+     interface VisualSettingsLabelingParams {//points labeling 
         show: boolean;
          //addLabel2points: boolean;
          textSize: number; //TODO: textSize
@@ -62,20 +57,19 @@ module powerbi.extensibility.visual {
          percentile1: number; //TODO: percentage
 
      }
-      interface VisualSettings5 {//dalegate labeling 
+      interface VisualSettingsRepresentativeParams {//representative labeling 
         show: boolean;
-        //addLabel2clusterDelegate: boolean;   
         textSize: number; //TODO: textSize
         maxLenDelegateLabel: number;
 
      }
-     interface VisualSettings6 {//legend and pallete 
+     interface VisualSettingsLegendParams {//legend and pallete 
         show: boolean;
         addLegend: boolean;
         palleteType: string; //TODO
 
      }
-     interface VisualSettings7 {//additional settings 
+     interface VisualSettingsAdditionalParams {//additional settings 
         show: boolean;
          showWarnings: boolean;
          minClusters: number;
@@ -90,13 +84,13 @@ module powerbi.extensibility.visual {
         private imageDiv: HTMLDivElement;
         private imageElement: HTMLImageElement;
 
-        private settings1: VisualSettings1;
-        private settings2: VisualSettings2;
-        private settings3: VisualSettings3;
-        private settings4: VisualSettings4;
-        private settings5: VisualSettings5;
-        private settings6: VisualSettings6;
-        private settings7: VisualSettings7;
+        private settings_prepocessing_params: VisualSettingsPreprocessingParams;
+        private settings_clusterNum_params: VisualSettingsClusterNumParams;
+        private settings_viz_params: VisualSettingsVizParams;
+        private settings_labeling_params: VisualSettingsLabelingParams;
+        private settings_representative_params: VisualSettingsRepresentativeParams;
+        private settings_legend_params: VisualSettingsLegendParams;
+        private settings_additional_params: VisualSettingsAdditionalParams;
       
 
         public constructor(options: VisualConstructorOptions) {
@@ -109,17 +103,17 @@ module powerbi.extensibility.visual {
 
             this.imageDiv.appendChild(this.imageElement);
 
-             this.settings1 = <VisualSettings1>{
+             this.settings_prepocessing_params = <VisualSettingsPreprocessingParams>{
                 show: false,
                  scaleData: false,
                  applyPCA: false,
             };
-            this.settings2 = <VisualSettings2>{
+            this.settings_clusterNum_params = <VisualSettingsClusterNumParams>{
                 show: false,
                 numOfClusters: "auto",
                 numClustersMethods: "fast",
             };
-            this.settings3 = <VisualSettings3>{
+            this.settings_viz_params = <VisualSettingsVizParams>{
                 show: false,
                 drawEllipse: false,
                 drawConvexHull: false,
@@ -127,26 +121,26 @@ module powerbi.extensibility.visual {
                 percentile: 40,
                 weight: 10,
             };
-            this.settings4 = <VisualSettings4>{
+            this.settings_labeling_params = <VisualSettingsLabelingParams>{
                 show: true,
                 textSize: 8, 
                 percentile: 80, 
                 maxLenPointLabel: 5,
                 percentile1: 100 
             };
-            this.settings5 = <VisualSettings5>{
+            this.settings_representative_params = <VisualSettingsRepresentativeParams>{
                 show: false,
                 textSize: 8, 
                 maxLenDelegateLabel: 30
                 
             };
-            this.settings6 = <VisualSettings6>{
+            this.settings_legend_params = <VisualSettingsLegendParams>{
                 show: true,
                 addLegend: true,
                 palleteType: "rainbow"
                 
             };
-            this.settings7 = <VisualSettings7>{
+            this.settings_additional_params = <VisualSettingsAdditionalParams>{
                 show: false,
                 showWarnings: true,
                 minClusters: 2,
@@ -166,54 +160,54 @@ module powerbi.extensibility.visual {
             if (!dataView || !dataView.metadata)
                 return;
 
-            this.settings1 = <VisualSettings1> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings1', 'show', false),
-                scaleData: getValue<boolean>(dataView.metadata.objects, 'settings1', 'scaleData', false),              
-                applyPCA: getValue<boolean>(dataView.metadata.objects, 'settings1', 'applyPCA',false),
+            this.settings_prepocessing_params = <VisualSettingsPreprocessingParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'show', false),
+                scaleData: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'scaleData', false),              
+                applyPCA: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'applyPCA',false),
             };
 
-            this.settings2= <VisualSettings2> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings2', 'show', false),
-                numOfClusters: getValue<string>(dataView.metadata.objects, 'settings2', 'numOfClusters',"auto"),
-                numClustersMethods: getValue<string>(dataView.metadata.objects, 'settings2', 'numClustersMethods',"fast"),
+            this.settings_clusterNum_params= <VisualSettingsClusterNumParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_clusterNum_params', 'show', false),
+                numOfClusters: getValue<string>(dataView.metadata.objects, 'settings_clusterNum_params', 'numOfClusters',"auto"),
+                numClustersMethods: getValue<string>(dataView.metadata.objects, 'settings_clusterNum_params', 'numClustersMethods',"fast"),
             };
-            this.settings3 = <VisualSettings3> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings3', 'show', false),
-                drawEllipse: getValue<boolean>(dataView.metadata.objects, 'settings3', 'drawEllipse', false),
-                drawConvexHull: getValue<boolean>(dataView.metadata.objects, 'settings3', 'drawConvexHull', false),
-                drawCentroid: getValue<boolean>(dataView.metadata.objects, 'settings3', 'drawCentroid', false),
-                percentile: getValue<number>(dataView.metadata.objects, 'settings3', 'percentile',40),
-                weight: getValue<number>(dataView.metadata.objects, 'settings3', 'weight',10),
-            };
-
-            this.settings4 = <VisualSettings4> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings4', 'show', true),
-               //addLabel2points: getValue<boolean>(dataView.metadata.objects, 'settings4', 'addLabel2points',false),
-                textSize: getValue<number>(dataView.metadata.objects, 'settings4', 'textSize',8),
-                percentile: getValue<number>(dataView.metadata.objects, 'settings4', 'percentile',100),
-                maxLenPointLabel: getValue<number>(dataView.metadata.objects, 'settings4', 'maxLenPointLabel',5),
-                percentile1: getValue<number>(dataView.metadata.objects, 'settings4', 'percentile1',100),
-            };
-            this.settings5 = <VisualSettings5> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings5', 'show', false),
-                //addLabel2clusterDelegate: getValue<boolean>(dataView.metadata.objects, 'settings5', 'addLabel2clusterDelegate', false),  
-                textSize: getValue<number>(dataView.metadata.objects, 'settings5', 'textSize', 8),
-                maxLenDelegateLabel: getValue<number>(dataView.metadata.objects, 'settings5', 'maxLenDelegateLabel', 30)
-
-            };
-            this.settings6 = <VisualSettings6> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings6', 'show', true),
-                addLegend: getValue<boolean>(dataView.metadata.objects, 'settings6', 'addLegend', true),
-                palleteType: getValue<string>(dataView.metadata.objects, 'settings6', 'palleteType', "rainbow"),
+            this.settings_viz_params = <VisualSettingsVizParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'show', false),
+                drawEllipse: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'drawEllipse', false),
+                drawConvexHull: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'drawConvexHull', false),
+                drawCentroid: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'drawCentroid', false),
+                percentile: getValue<number>(dataView.metadata.objects, 'settings_viz_params', 'percentile',40),
+                weight: getValue<number>(dataView.metadata.objects, 'settings_viz_params', 'weight',10),
             };
 
-            this.settings7 = <VisualSettings7> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings7', 'show', false),
-                showWarnings: getValue<boolean>(dataView.metadata.objects, 'settings7', 'showWarnings', true),
-                minClusters: getValue<number>(dataView.metadata.objects, 'settings7', 'minClusters', 2),
-                maxClusters: getValue<number>(dataView.metadata.objects, 'settings7', 'maxClusters', 12),
-                maxIter: getValue<number>(dataView.metadata.objects, 'settings7', 'maxIter', 10),
-                nStart: getValue<number>(dataView.metadata.objects, 'settings7', 'nStart', 5),
+            this.settings_labeling_params = <VisualSettingsLabelingParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_labeling_params', 'show', true),
+               //addLabel2points: getValue<boolean>(dataView.metadata.objects, 'settings_labeling_params', 'addLabel2points',false),
+                textSize: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'textSize',8),
+                percentile: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'percentile',100),
+                maxLenPointLabel: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'maxLenPointLabel',5),
+                percentile1: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'percentile1',100),
+            };
+            this.settings_representative_params = <VisualSettingsRepresentativeParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_representative_params', 'show', false),
+                //addLabel2clusterDelegate: getValue<boolean>(dataView.metadata.objects, 'settings_representative_params', 'addLabel2clusterDelegate', false),  
+                textSize: getValue<number>(dataView.metadata.objects, 'settings_representative_params', 'textSize', 8),
+                maxLenDelegateLabel: getValue<number>(dataView.metadata.objects, 'settings_representative_params', 'maxLenDelegateLabel', 30)
+
+            };
+            this.settings_legend_params = <VisualSettingsLegendParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_legend_params', 'show', true),
+                addLegend: getValue<boolean>(dataView.metadata.objects, 'settings_legend_params', 'addLegend', true),
+                palleteType: getValue<string>(dataView.metadata.objects, 'settings_legend_params', 'palleteType', "rainbow"),
+            };
+
+            this.settings_additional_params = <VisualSettingsAdditionalParams> {
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'show', false),
+                showWarnings: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'showWarnings', true),
+                minClusters: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'minClusters', 2),
+                maxClusters: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'maxClusters', 12),
+                maxIter: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'maxIter', 10),
+                nStart: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'nStart', 5),
             };
       
            
@@ -242,28 +236,28 @@ module powerbi.extensibility.visual {
             let objectEnumeration = [];
 
             switch(objectName) {
-                case 'settings1':
+                case 'settings_prepocessing_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings1.show,
-                            scaleData: this.settings1.scaleData,
-                            applyPCA: this.settings1.applyPCA,
+                            show: this.settings_prepocessing_params.show,
+                            scaleData: this.settings_prepocessing_params.scaleData,
+                            applyPCA: this.settings_prepocessing_params.applyPCA,
                             
                          },
                         selector: null
                     });
                     break;
                     
-                    case 'settings2':
-                    if(this.settings2.numOfClusters=="auto")
+                    case 'settings_clusterNum_params':
+                    if(this.settings_clusterNum_params.numOfClusters=="auto")
                     {
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings2.show,
-                            numOfClusters: this.settings2.numOfClusters,
-                            numClustersMethods:ifStringReturnStringClustersMethod(this.settings2.numClustersMethods, this.settings2.numOfClusters)
+                            show: this.settings_clusterNum_params.show,
+                            numOfClusters: this.settings_clusterNum_params.numOfClusters,
+                            numClustersMethods:ifStringReturnStringClustersMethod(this.settings_clusterNum_params.numClustersMethods, this.settings_clusterNum_params.numOfClusters)
                          },
                         selector: null
                     });
@@ -273,8 +267,8 @@ module powerbi.extensibility.visual {
                        objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings2.show,
-                            numOfClusters: this.settings2.numOfClusters,
+                            show: this.settings_clusterNum_params.show,
+                            numOfClusters: this.settings_clusterNum_params.numOfClusters,
                          },
                         selector: null
                     });
@@ -285,70 +279,70 @@ module powerbi.extensibility.visual {
                     
                     
 
-                    case 'settings3':
+                    case 'settings_viz_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings3.show,
-                            drawEllipse: this.settings3.drawEllipse,
-                            drawConvexHull: this.settings3.drawConvexHull,
-                            drawCentroid: this.settings3.drawCentroid,
-                            percentile: this.settings3.percentile,
-                            weight: this.settings3.weight
+                            show: this.settings_viz_params.show,
+                            drawEllipse: this.settings_viz_params.drawEllipse,
+                            drawConvexHull: this.settings_viz_params.drawConvexHull,
+                            drawCentroid: this.settings_viz_params.drawCentroid,
+                            percentile: this.settings_viz_params.percentile,
+                            weight: this.settings_viz_params.weight
                          },
                         selector: null
                     });
                     break;
-                    case 'settings4':
+                    case 'settings_labeling_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings4.show,                   
-                            textSize: this.settings4.textSize,
-                            percentile: this.settings4.percentile,
-                            maxLenPointLabel: this.settings4.maxLenPointLabel,
-                            percentile1: inMinMax(this.settings4.percentile1, 0, 100)
+                            show: this.settings_labeling_params.show,                   
+                            textSize: this.settings_labeling_params.textSize,
+                            percentile: this.settings_labeling_params.percentile,
+                            maxLenPointLabel: this.settings_labeling_params.maxLenPointLabel,
+                            percentile1: inMinMax(this.settings_labeling_params.percentile1, 0, 100)
                          },
                         selector: null
                     });
                     break;
-                    case 'settings5':
+                    case 'settings_representative_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings5.show,
-                            //addLabel2clusterDelegate: this.settings5.addLabel2clusterDelegate,
-                            textSize: this.settings5.textSize,
-                            maxLenDelegateLabel: this.settings5.maxLenDelegateLabel,
+                            show: this.settings_representative_params.show,
+                            //addLabel2clusterDelegate: this.settings_representative_params.addLabel2clusterDelegate,
+                            textSize: this.settings_representative_params.textSize,
+                            maxLenDelegateLabel: this.settings_representative_params.maxLenDelegateLabel,
                          },
                         selector: null
                     });
                     break;
-                    case 'settings6':
+                    case 'settings_legend_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings6.show,
-                            addLegend: this.settings6.addLegend,
-                            palleteType: this.settings6.palleteType
+                            show: this.settings_legend_params.show,
+                            addLegend: this.settings_legend_params.addLegend,
+                            palleteType: this.settings_legend_params.palleteType
                          },
                         selector: null
                     });
                     break;
-                    case 'settings7':
-                     if(this.settings2.numOfClusters=="auto")
+                    case 'settings_additional_params':
+                     if(this.settings_clusterNum_params.numOfClusters=="auto")
                     {
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings7.show,
-                            showWarnings: this.settings7.showWarnings,
+                            show: this.settings_additional_params.show,
+                            showWarnings: this.settings_additional_params.showWarnings,
                           
-                            minClusters: inMinMax(this.settings7.minClusters, 1, 15),
-                            maxClusters: inMinMax(this.settings7.maxClusters, this.settings7.minClusters, 15),
+                            minClusters: inMinMax(this.settings_additional_params.minClusters, 1, 15),
+                            maxClusters: inMinMax(this.settings_additional_params.maxClusters, this.settings_additional_params.minClusters, 15),
                           
-                            maxIter: inMinMax(this.settings7.maxIter, 1, 100),
-                             nStart: inMinMax(this.settings7.nStart, 1, 100),
+                            maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
+                             nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
                          },
                         selector: null
                     });
@@ -358,10 +352,10 @@ module powerbi.extensibility.visual {
                       objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings7.show,
-                            showWarnings: this.settings7.showWarnings,   
-                            maxIter: inMinMax(this.settings7.maxIter, 1, 100),
-                             nStart: inMinMax(this.settings7.nStart, 1, 100),
+                            show: this.settings_additional_params.show,
+                            showWarnings: this.settings_additional_params.showWarnings,   
+                            maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
+                             nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
                          },
                         selector: null
                     });  

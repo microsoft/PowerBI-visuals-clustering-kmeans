@@ -80,40 +80,40 @@ if(!is.null(PointLabels))
 ##PBI_PARAM: Specify if legend is to be present on the plot
 #Type: logical, Default:TRUE, Range:NA, PossibleValues:NA, Remarks: NA
 addLegend = TRUE
-if(exists("settings6_show"))
-  addLegend = settings6_show
+if(exists("settings_legend_params_show"))
+  addLegend = settings_legend_params_show
 
 ############ User Parameters #########
 
-if(exists("settings1_show") && settings1_show == FALSE)
-  rm(list= ls(pattern = "settings1_"))
-if(exists("settings2_show") && settings2_show == FALSE)
-  rm(list= ls(pattern = "settings2_"))
-if(exists("settings3_show") && settings3_show == FALSE)
-  rm(list= ls(pattern = "settings3_"))
-if(exists("settings4_show") && settings4_show == FALSE)
-  rm(list= ls(pattern = "settings4_"))
-if(exists("settings5_show") && settings5_show == FALSE)
-  rm(list= ls(pattern = "settings5_"))
-if(exists("settings6_show") && settings6_show == FALSE)
-  rm(list= ls(pattern = "settings6_"))
-if(exists("settings7_show") && settings7_show == FALSE)
-  rm(list= ls(pattern = "settings7_"))
+if(exists("settings_prepocessing_params_show") && settings_prepocessing_params_show == FALSE)
+  rm(list= ls(pattern = "settings_prepocessing_params_"))
+if(exists("settings_clusterNum_params_show") && settings_clusterNum_params_show == FALSE)
+  rm(list= ls(pattern = "settings_clusterNum_params_"))
+if(exists("settings_viz_params_show") && settings_viz_params_show == FALSE)
+  rm(list= ls(pattern = "settings_viz_params_"))
+if(exists("settings_labeling_params_show") && settings_labeling_params_show == FALSE)
+  rm(list= ls(pattern = "settings_labeling_params_"))
+if(exists("settings_representative_params_show") && settings_representative_params_show == FALSE)
+  rm(list= ls(pattern = "settings_representative_params_"))
+if(exists("settings_legend_params_show") && settings_legend_params_show == FALSE)
+  rm(list= ls(pattern = "settings_legend_params_"))
+if(exists("settings_additional_params_show") && settings_additional_params_show == FALSE)
+  rm(list= ls(pattern = "settings_additional_params_"))
 
 
 
 ##PBI_PARAM: Should warnings text be displayed?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 showWarnings = TRUE 
-if(exists("settings7_showWarnings"))
-  showWarnings = settings7_showWarnings
+if(exists("settings_additional_params_showWarnings"))
+  showWarnings = settings_additional_params_showWarnings
 
 ##PBI_PARAM: Number of clusters to detect
 #Type:integer/string, Default:'auto', Range:NA, PossibleValues:2,3,...,15, "auto" , Remarks: NA
 numOfClusters = 0 
-if(exists("settings2_numOfClusters"))
+if(exists("settings_clusterNum_params_numOfClusters"))
 {
-  numOfClusters = as.numeric(settings2_numOfClusters)
+  numOfClusters = as.numeric(settings_clusterNum_params_numOfClusters)
   if(is.na(numOfClusters))
     numOfClusters = 0
 }
@@ -121,39 +121,39 @@ if(exists("settings2_numOfClusters"))
 # possible values "fast", "moderate","slow"
 #Type: string, Default:"fast", Range:NA, PossibleValues:{"fast","moderate","slow"}, Remarks: NA
 numClustersMethods = "fast"
-if(exists("settings2_numClustersMethods"))
+if(exists("settings_clusterNum_params_numClustersMethods"))
 {
-  numClustersMethods = settings2_numClustersMethods
+  numClustersMethods = settings_clusterNum_params_numClustersMethods
   if(numClustersMethods=="None")
     numClustersMethods = "fast"
 }
 ##PBI_PARAM: standardize each column (zero mean, unit standard deviation)
 #Type: logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks:strongly recommended if each column measured in different units
 scaleData = FALSE
-if(exists("settings1_scaleData"))
-  scaleData = settings1_scaleData 
+if(exists("settings_prepocessing_params_scaleData"))
+  scaleData = settings_prepocessing_params_scaleData 
 
 ##PBI_PARAM: apply Principle Component Analysis?
 #an orthogonal transformation to convert a set of observations of possibly correlated variables 
 #into a set of values of linearly uncorrelated variables. New dimensions are sorted by the amount of variance they explain
 #Type: logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: Original units got lost. 
 applyPCA = FALSE
-if(exists("settings1_applyPCA"))
-  applyPCA = settings1_applyPCA 
+if(exists("settings_prepocessing_params_applyPCA"))
+  applyPCA = settings_prepocessing_params_applyPCA 
 
 
 
 ##PBI_PARAM:Specify if ellipse of 85% confidence should be drawn
 #Type: logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 drawEllipse = FALSE
-if(exists("settings3_drawEllipse"))
-  drawEllipse = settings3_drawEllipse 
+if(exists("settings_viz_params_drawEllipse"))
+  drawEllipse = settings_viz_params_drawEllipse 
 
 ##PBI_PARAM: Specify if convex hull of each cluster should be drawn
 #Type: logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 drawConvexHull = FALSE
-if(exists("settings3_drawConvexHull"))
-  drawConvexHull = settings3_drawConvexHull 
+if(exists("settings_viz_params_drawConvexHull"))
+  drawConvexHull = settings_viz_params_drawConvexHull 
 
 
 
@@ -161,15 +161,15 @@ if(exists("settings3_drawConvexHull"))
 # the data of one observation closest to the center of cluster is added on top of graph 
 #Type: logical, Default:TRUE, Range:NA, PossibleValues:NA, Remarks: NA
 addLabel2clusterDelegate = FALSE
-if(exists("settings5_show"))
-  addLabel2clusterDelegate = settings5_show 
+if(exists("settings_representative_params_show"))
+  addLabel2clusterDelegate = settings_representative_params_show 
 
 
 ##PBI_PARAM: If addLabel2points is TRUE will use first column to label points on the plot
 #Type: logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 addLabel2points = TRUE
-if(exists("settings4_show"))
-  addLabel2points = settings4_show 
+if(exists("settings_labeling_params_show"))
+  addLabel2points = settings_labeling_params_show 
 
 # if(addLabel2points==TRUE && exists("PointLabels") && !is.null(PointLabels))
 #   addLabel2points = TRUE
@@ -200,8 +200,8 @@ libraryRequireInstall("vegan")
 ##PBI_PARAM: Specify if cluster centers should be plotted
 #Type: logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 drawCenters = FALSE
-if(exists("settings3_drawCentroid"))
-  drawCenters = settings3_drawCentroid
+if(exists("settings_viz_params_drawCentroid"))
+  drawCenters = settings_viz_params_drawCentroid
 
 
 ##PBI_PARAM: Specify if observation points should be plotted
@@ -217,38 +217,38 @@ randSeed = 42
 ##PBI_PARAM: minimum number of clusters
 #Type: positive integer, Default:1, Range:[1:10], PossibleValues:NA, Remarks: NA
 minClusters = 1 
-if(exists("settings7_minClusters"))
-  minClusters = settings7_minClusters
+if(exists("settings_additional_params_minClusters"))
+  minClusters = settings_additional_params_minClusters
 minClusters= max(min(minClusters,15),1)
 
 ##PBI_PARAM: maximum number of clusters
 #Type: positive integer, Default:12, Range:[3:15], PossibleValues:NA, Remarks: NA
 maxClusters = 12
-if(exists("settings7_maxClusters"))
-  maxClusters = settings7_maxClusters
+if(exists("settings_additional_params_maxClusters"))
+  maxClusters = settings_additional_params_maxClusters
 
 maxClusters= max(min(maxClusters,15),minClusters)
 
 ##PBI_PARAM: max iterations in kmeans
 #Type: positive integer, Default:7, Range:[1:100], PossibleValues:NA, Remarks: Influences running time
 iter.max = 7 
-if(exists("settings7_maxIter"))
-  iter.max = settings7_maxIter
+if(exists("settings_additional_params_maxIter"))
+  iter.max = settings_additional_params_maxIter
 
 iter.max= max(min(iter.max,100),1)
 
 ##PBI_PARAM: max initializations in kmeans
 #Type: positive integer, Default:5, Range:[1:100], PossibleValues:NA, Remarks: Influences running time
 nstart = 5 
-if(exists("settings7_nStart"))
-  nstart = settings7_nStart
+if(exists("settings_additional_params_nStart"))
+  nstart = settings_additional_params_nStart
 nstart= max(min(nstart,100),1)
 
 ##PBI_PARAM: transparency of points on plot, 0 is invisible, 1 is opaque
 #Type: numeric, Default:0.3, Range:[0,1], PossibleValues:NA, Remarks: NA
 pointTransparency = 0.3
-if(exists("settings3_percentile"))
-  pointTransparency = as.numeric(settings3_percentile)/100
+if(exists("settings_viz_params_percentile"))
+  pointTransparency = as.numeric(settings_viz_params_percentile)/100
 
 ##PBI_PARAM: minimum required samples (rows in data table)
 #Type: positive integer, Default:8, Range:[5,100], PossibleValues:NA, Remarks: NA
@@ -261,8 +261,8 @@ maxSamples4autoNumClusters = 5000
 ##PBI_PARAM: maximum characters per delagate label
 #Type: positive integer, Default:30, Range:[1,100], PossibleValues:NA, Remarks: NA
 maxLenDelegate = 30  
-if(exists("settings5_maxLenDelegateLabel"))
-  maxLenDelegate = settings5_maxLenDelegateLabel
+if(exists("settings_representative_params_maxLenDelegateLabel"))
+  maxLenDelegate = settings_representative_params_maxLenDelegateLabel
 
 
 ##PBI_PARAM: insignificant principle component threshold
@@ -273,45 +273,45 @@ insigPC = 0.05
 ##PBI_PARAM: font size for delegate text 
 #Type: positive numeric, Default:0.5, Range:[0.1,2], PossibleValues:NA, Remarks: NA
 delegateCex = 0.5
-if(exists("settings5_textSize"))
-  delegateCex = as.numeric(settings5_textSize)/10
+if(exists("settings_representative_params_textSize"))
+  delegateCex = as.numeric(settings_representative_params_textSize)/10
 
 
 ##PBI_PARAM: font size for text on each point 
 #Type: positive numeric, Default:0.5, Range:[0.1,2], PossibleValues:NA, Remarks: NA
 cexLabel2points = 0.5
-if(exists("settings4_textSize"))
-  cexLabel2points = as.numeric(settings4_textSize)/10
+if(exists("settings_labeling_params_textSize"))
+  cexLabel2points = as.numeric(settings_labeling_params_textSize)/10
 
 ##PBI_PARAM: transparency of labels for points on plot, 0 is invisible, 1 is opaque
 #Type: numeric, Default:0.75, Range:[0,1], PossibleValues:NA, Remarks: NA
 transparencyLabel2points = 1
-if(exists("settings4_percentile"))
-  transparencyLabel2points = as.numeric(settings4_percentile)/100
+if(exists("settings_labeling_params_percentile"))
+  transparencyLabel2points = as.numeric(settings_labeling_params_percentile)/100
 
 ##PBI_PARAM: size of point marker
 #Type: numeric, Default:0.75, Range:[0,1], PossibleValues:NA, Remarks: NA
 pointMarkerSize = 1
-if(exists("settings3_weight"))
-  pointMarkerSize = as.numeric(settings3_weight)/10
+if(exists("settings_viz_params_weight"))
+  pointMarkerSize = as.numeric(settings_viz_params_weight)/10
 
 ##PBI_PARAM: use up to maxLenLabel2points for points labels (only first column is used)
 #Type: positive integer, Default:4, Range:[1,100], PossibleValues:NA, Remarks: NA
 maxLenLabel2points = 4
-if(exists("settings4_maxLenPointLabel"))
-  maxLenLabel2points = as.numeric(settings4_maxLenPointLabel)
+if(exists("settings_labeling_params_maxLenPointLabel"))
+  maxLenLabel2points = as.numeric(settings_labeling_params_maxLenPointLabel)
 
 ##PBI_PARAM: show only each skipLabel2points for points labels
 #Type: positive number,can be float, Default:1, Range:[1,100], PossibleValues:NA, Remarks: NA
 skipLabel2points = 1
-if(exists("settings4_percentile1"))
+if(exists("settings_labeling_params_percentile1"))
 {
-  skipLabel2points = 100/as.numeric(settings4_percentile1) 
+  skipLabel2points = 100/as.numeric(settings_labeling_params_percentile1) 
   skipLabel2points = max(skipLabel2points,1)
 }
 palleteType = "rainbow"
-if(exists("settings6_palleteType"))
-  palleteType = settings6_palleteType 
+if(exists("settings_legend_params_palleteType"))
+  palleteType = settings_legend_params_palleteType 
 
 ###############Internal functions definitions#################
 
