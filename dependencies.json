@@ -1,0 +1,61 @@
+{
+  "cranPackages": [
+    {
+      "name": "nloptr",
+      "displayName": "nloptr: R interface to NLopt",
+      "url": "https://cran.r-project.org/web/packages/nloptr/index.html"
+    },
+     {
+      "name": "seriation",
+      "displayName": "seriation: Infrastructure for Ordering Objects",
+      "url": "https://cran.r-project.org/web/packages/seriation/index.html"
+    },
+     {
+      "name": "pbkrtest",
+      "displayName": "pbkrtest: Parametric Bootstrap ",
+      "url": "https://cran.r-project.org/web/packages/pbkrtest/index.html"
+    },
+     {
+      "name": "NbClust",
+      "displayName": "NbClust: Determining the Best Number of Clusters in a Data Set",
+      "url": "https://cran.r-project.org/web/packages/NbClust/index.html"
+    },
+     {
+      "name": "cluster",
+      "displayName": "cluster: Cluster Analysis Extended",
+      "url": "https://cran.r-project.org/web/packages/cluster/index.html"
+    },
+     {
+      "name": "car",
+      "displayName": "car: Companion to Applied Regression",
+      "url": "https://cran.r-project.org/web/packages/car/index.html"
+    },
+     {
+      "name": "scales",
+      "displayName": "scales: Scale Functions for Visualization",
+      "url": "https://cran.r-project.org/web/packages/scales/index.html"
+    },
+     {
+      "name": "fpc",
+      "displayName": "fpc: Flexible Procedures for Clustering",
+      "url": "https://cran.r-project.org/web/packages/fpc/index.html"
+    },
+     {
+      "name": "mclust",
+      "displayName": "mclust: Gaussian Mixture Modelling for Model-Based Clustering",
+      "url": "https://cran.r-project.org/web/packages/mclust/index.html"
+    },
+     {
+      "name": "apcluster",
+      "displayName": "apcluster: Affinity Propagation Clustering",
+      "url": "https://cran.r-project.org/web/packages/apcluster/index.html"
+    },
+     {
+      "name": "vegan",
+      "displayName": "vegan: Community Ecology Package",
+      "url": "https://cran.r-project.org/web/packages/vegan/index.html"
+    }
+  ]
+}
+
+
