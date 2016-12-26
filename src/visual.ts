@@ -300,7 +300,7 @@ module powerbi.extensibility.visual {
                             show: this.settings_labeling_params.show,                   
                             textSize: this.settings_labeling_params.textSize,
                             percentile: this.settings_labeling_params.percentile,
-                            maxLenPointLabel: this.settings_labeling_params.maxLenPointLabel,
+                            maxLenPointLabel: inMinMax(this.settings_labeling_params.maxLenPointLabel, 1, 100),
                             percentile1: inMinMax(this.settings_labeling_params.percentile1, 0, 100)
                          },
                         selector: null
@@ -313,7 +313,7 @@ module powerbi.extensibility.visual {
                             show: this.settings_representative_params.show,
                             //addLabel2clusterDelegate: this.settings_representative_params.addLabel2clusterDelegate,
                             textSize: this.settings_representative_params.textSize,
-                            maxLenDelegateLabel: this.settings_representative_params.maxLenDelegateLabel,
+                            maxLenDelegateLabel: inMinMax(this.settings_representative_params.maxLenDelegateLabel, 1, 100),
                          },
                         selector: null
                     });
