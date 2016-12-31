@@ -43,30 +43,28 @@ module powerbi.extensibility.visual {
         drawEllipse: boolean;
         drawConvexHull: boolean;
         drawCentroid: boolean;
-        percentile: number; //TODO: percentage
+        percentile: number; 
         weight: number;
        
      }
      interface VisualSettingsLabelingParams {//points labeling 
         show: boolean;
-         //addLabel2points: boolean;
-         textSize: number; //TODO: textSize
-         //cexLabel2points: number; //TODO: textSize
-         percentile: number; //TODO: percentage
+         textSize: number; 
+         percentile: number; 
          maxLenPointLabel: number;
-         percentile1: number; //TODO: percentage
+         percentile1: number; 
 
      }
       interface VisualSettingsRepresentativeParams {//representative labeling 
         show: boolean;
-        textSize: number; //TODO: textSize
+        textSize: number; 
         maxLenDelegateLabel: number;
 
      }
      interface VisualSettingsLegendParams {//legend and pallete 
         show: boolean;
         addLegend: boolean;
-        palleteType: string; //TODO
+        palleteType: string; 
 
      }
      interface VisualSettingsAdditionalParams {//additional settings 
@@ -182,15 +180,13 @@ module powerbi.extensibility.visual {
 
             this.settings_labeling_params = <VisualSettingsLabelingParams> {
                 show: getValue<boolean>(dataView.metadata.objects, 'settings_labeling_params', 'show', true),
-               //addLabel2points: getValue<boolean>(dataView.metadata.objects, 'settings_labeling_params', 'addLabel2points',false),
                 textSize: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'textSize',8),
                 percentile: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'percentile',100),
                 maxLenPointLabel: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'maxLenPointLabel',5),
                 percentile1: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'percentile1',100),
             };
             this.settings_representative_params = <VisualSettingsRepresentativeParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_representative_params', 'show', false),
-                //addLabel2clusterDelegate: getValue<boolean>(dataView.metadata.objects, 'settings_representative_params', 'addLabel2clusterDelegate', false),  
+                show: getValue<boolean>(dataView.metadata.objects, 'settings_representative_params', 'show', false),  
                 textSize: getValue<number>(dataView.metadata.objects, 'settings_representative_params', 'textSize', 8),
                 maxLenDelegateLabel: getValue<number>(dataView.metadata.objects, 'settings_representative_params', 'maxLenDelegateLabel', 30)
 
@@ -311,7 +307,6 @@ module powerbi.extensibility.visual {
                         objectName: objectName,
                         properties: {
                             show: this.settings_representative_params.show,
-                            //addLabel2clusterDelegate: this.settings_representative_params.addLabel2clusterDelegate,
                             textSize: this.settings_representative_params.textSize,
                             maxLenDelegateLabel: inMinMax(this.settings_representative_params.maxLenDelegateLabel, 1, 100),
                          },

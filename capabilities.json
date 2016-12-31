@@ -146,7 +146,7 @@
           },
           "numClustersMethods": {
               "displayName": "Method",
-              "description": "Select a method automate the number of clusters displayed",
+              "description": "Select a method to automate the number of clusters displayed",
               "type": {
                 "enumeration": [
                   {
@@ -332,7 +332,7 @@
           },  
           "maxIter":{
             "displayName": "Maximum iterations",
-            "description": "Maximum iterations to convergence of k-means clustering",
+            "description": "The maximum number of iterations allowed",
             "type": {
               "numeric": true
             }
