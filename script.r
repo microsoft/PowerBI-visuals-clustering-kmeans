@@ -88,8 +88,6 @@ if(exists("settings_legend_params_show") && settings_legend_params_show == FALSE
 if(exists("settings_additional_params_show") && settings_additional_params_show == FALSE)
   rm(list= ls(pattern = "settings_additional_params_"))
 
-
-
 ##PBI_PARAM: Should warnings text be displayed?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 showWarnings = TRUE 
