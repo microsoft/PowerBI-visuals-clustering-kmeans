@@ -6,24 +6,19 @@
       "url": "https://cran.r-project.org/web/packages/nloptr/index.html"
     },
      {
-      "name": "seriation",
-      "displayName": "seriation: Infrastructure for Ordering Objects",
-      "url": "https://cran.r-project.org/web/packages/seriation/index.html"
+      "name": "vegan",
+      "displayName": "vegan: Community Ecology Package",
+      "url": "https://cran.r-project.org/web/packages/vegan/index.html"
     },
      {
       "name": "pbkrtest",
-      "displayName": "pbkrtest: Parametric Bootstrap ",
+      "displayName": "pbkrtest: Parametric Bootstrap",
       "url": "https://cran.r-project.org/web/packages/pbkrtest/index.html"
     },
      {
       "name": "NbClust",
       "displayName": "NbClust: Determining the Best Number of Clusters in a Data Set",
       "url": "https://cran.r-project.org/web/packages/NbClust/index.html"
-    },
-     {
-      "name": "cluster",
-      "displayName": "cluster: Cluster Analysis Extended",
-      "url": "https://cran.r-project.org/web/packages/cluster/index.html"
     },
      {
       "name": "car",
@@ -35,25 +30,40 @@
       "displayName": "scales: Scale Functions for Visualization",
       "url": "https://cran.r-project.org/web/packages/scales/index.html"
     },
-     {
-      "name": "fpc",
-      "displayName": "fpc: Flexible Procedures for Clustering",
-      "url": "https://cran.r-project.org/web/packages/fpc/index.html"
-    },
-     {
+	{
       "name": "mclust",
       "displayName": "mclust: Gaussian Mixture Modelling for Model-Based Clustering",
       "url": "https://cran.r-project.org/web/packages/mclust/index.html"
-    },
+    },  
      {
       "name": "apcluster",
       "displayName": "apcluster: Affinity Propagation Clustering",
       "url": "https://cran.r-project.org/web/packages/apcluster/index.html"
     },
      {
-      "name": "vegan",
-      "displayName": "vegan: Community Ecology Package",
-      "url": "https://cran.r-project.org/web/packages/vegan/index.html"
+      "name": "fpc",
+      "displayName": "fpc: Flexible Procedures for Clustering",
+      "url": "https://cran.r-project.org/web/packages/fpc/index.html"
+    },
+	{
+      "name": "TSP",
+      "displayName": "TSP: Traveling Salesperson Problem (TSP)",
+      "url": "https://cran.r-project.org/web/packages/TSP/index.html"
+    },
+	{
+      "name": "gplots",
+      "displayName": "gplots: Various R Programming Tools for Plotting Data",
+      "url": "https://cran.r-project.org/web/packages/gplots/index.html"
+    },
+	{
+      "name": "ggplot2",
+      "displayName": "ggplot2: An Implementation of the Grammar of Graphics",
+      "url": "https://cran.r-project.org/web/packages/ggplot2/index.html"
+    },
+	{
+      "name": "seriation",
+      "displayName": "seriation: Infrastructure for Ordering Objects",
+      "url": "https://cran.r-project.org/web/packages/seriation/index.html"
     }
   ]
 }

@@ -2,13 +2,13 @@
   "dataRoles": [
     {
       "displayName": "Values",
-      "description": "Add two or more numerical columns",
+      "description": "Add two or more numeric columns",
       "kind": "Grouping",
       "name": "Values"
     }, 
     {
-      "displayName": "Point Labels",
-      "description": "Short textual or numerical labels per data point (optional)",
+      "displayName": "Data point labels",
+      "description": "Short label(text or numeric) for each data point (optional)",
       "kind": "GroupingOrMeasure",
       "name": "PointLabels"
     }
@@ -68,14 +68,14 @@
             },
          "scaleData":{
             "displayName": "Scale data",
-            "description": "Recommended if not all of the data dimensions are in same units",
+            "description": "Used to standardize the range of features of data",
             "type": {
               "bool": true
             }
           },
            "applyPCA":{
             "displayName": "Apply PCA",
-            "description": "Recommended if data has more than 2 dimensions",
+            "description": "Recommended for data with more than two dimensions",
             "type": {
               "bool": true
             }
@@ -84,7 +84,7 @@
     },
       "settings_clusterNum_params":{
         "displayName": "Parameters for clusters definition",
-        "description": "Parameters for tuning the number of clusters",
+        "description": "Allows you to tune the number of clusters",
         "properties": {
           "show": {
                 "type": {"bool": true}
@@ -146,7 +146,7 @@
           },
           "numClustersMethods": {
               "displayName": "Method",
-              "description": "Select one of the  methods for automatic number of clusters selection",
+              "description": "Select a method to automate the number of clusters displayed",
               "type": {
                 "enumeration": [
                   {
@@ -173,19 +173,19 @@
                 "type": {"bool": true}
             },
              "drawEllipse":{
-            "displayName": "Draw Ellipse",
+            "displayName": "Draw ellipse",
             "type": {
               "bool": true
             }
           },
           "drawConvexHull":{
-            "displayName": "Draw Convex Hull",
+            "displayName": "Draw convex hull",
             "type": {
               "bool": true
             }
           }, 
           "drawCentroid":{
-            "displayName": "Draw Centroid",
+            "displayName": "Draw centroid",
             "type": {
               "bool": true
             }
@@ -225,14 +225,14 @@
           },
           "maxLenPointLabel":{
             "displayName": "Limit label length",
-            "description": "Use abbreviation with limited length",
+            "description": "Abbreviate labels to a limited length",
             "type": {
               "numeric": true
             }
           },
           "percentile1":{
             "displayName": "Percentage of points labeled",
-            "description": "Recommended for dense points, to avoid clutter of text",
+            "description": "Avoids cluttering text",
             "type": {
               "numeric": true
             }
@@ -241,7 +241,7 @@
     },
     "settings_representative_params":{
         "displayName": "Cluster representative labeling",
-        "description": "Add label to the most typical representative of each cluster",
+        "description": "Add a label to the typical representative of each cluster",
         "properties": {
           "show": {
                 "type": {"bool": true}
@@ -255,7 +255,7 @@
 
           "maxLenDelegateLabel":{
             "displayName": "Limit label length",
-             "description": "Use abbreviation with limited length",
+             "description": "Abbreviate labels to a limited length",
             "type": {
               "numeric": true
             }
@@ -266,14 +266,14 @@
     },
     "settings_legend_params":{
         "displayName": "Legend",
-         "description": "Parameters for the legend area of the clustering plot",
+         "description": "Parameters for the clustering plot legend",
         "properties": {
           "show": {
                 "type": {"bool": true}
             }, 
             "palleteType": {
               "displayName": "Pallete type",
-              "description": "Pallete for color clusters",
+              "description": "Color pallete type",
               "type": {
                 "enumeration": [
                   {
@@ -307,7 +307,7 @@
     },
     "settings_additional_params":{
         "displayName": "Additional clustering parameters",
-        "description": "Parameters for advanced users",
+        "description": "Advanced parameters",
         "properties": {
           "show": {
                 "type": {"bool": true}
@@ -318,28 +318,28 @@
           },
           "minClusters":{
             "displayName": "Minimum clusters",
-            "description": "Minimum clusters to search with `auto-clusters`",
+            "description": "Minimum clusters to search with auto-clusters",
             "type": {
               "numeric": true
             }
           },
           "maxClusters":{
             "displayName": "Maximum clusters",
-            "description": "Maximum clusters to search with `auto-clusters`",
+            "description": "Maximum clusters to search with auto-clusters",
             "type": {
               "numeric": true
             }
           },  
           "maxIter":{
             "displayName": "Maximum iterations",
-            "description": "Maximum iterations till convergance of k-means clustering",
+            "description": "The maximum number of iterations allowed",
             "type": {
               "numeric": true
             }
           },  
           "nStart":{
             "displayName": "Number of initializations",
-            "description": "Number of random initializations for k-means clustering",
+            "description": "Number of random initialziations for k-means clustering",
             "type": {
               "numeric": true
             }
