@@ -10,7 +10,6 @@
 # understand and comply with those license terms.
 # Microsoft grants you no license rights for third-party software or applications that is obtained using this software.
 
-
 ##PBI_R_VISUAL: VIZGAL_CLUSTERING  Graphical display of a clustering applied to point cloud 
 # Computes and visualizes a clustering performed with KMEANS clustering algorithm. 
 # Allows user to control number of clusters or to find it automatically. 
