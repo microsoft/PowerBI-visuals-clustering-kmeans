@@ -45,14 +45,14 @@ source('./r_files/flatten_HTML.r')
 
 
 #DEBUG 
-fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
-if(file.exists(dirname(fileRda)))
-{
-  if(Sys.getenv("RSTUDIO")!="")
-    load(file= fileRda) 
-  else
-    save(list = ls(all.names = TRUE), file=fileRda)
-}
+# fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+# if(file.exists(dirname(fileRda)))
+# {
+#   if(Sys.getenv("RSTUDIO")!="")
+#     load(file= fileRda) 
+#   else
+#     save(list = ls(all.names = TRUE), file=fileRda)
+# }
 
 
 options(warn = -1)
@@ -1110,7 +1110,7 @@ internalSaveWidget(p, 'out.html')
 ####################################################
 
 #display in R studio
-if(Sys.getenv("RSTUDIO")!="")
-{print(p)
-  print(gg)}
+# if(Sys.getenv("RSTUDIO")!="")
+# {print(p)
+#   print(gg)}
 
