@@ -47,7 +47,6 @@ module powerbi.extensibility.visual {
     }
 
 
-    }
 
     interface VisualSettingsVizParams {//appearance 
         // show: boolean;
@@ -74,14 +73,12 @@ module powerbi.extensibility.visual {
         maxLenDelegateLabel: number;
     }
 
-
-    }
     interface VisualSettingsLegendParams {//legend and pallete 
         show: boolean;
         addLegend: boolean;
         palleteType: string;
-
     }
+	
     interface VisualSettingsAdditionalParams {//additional settings 
         //show: boolean;
         sparsify: boolean;

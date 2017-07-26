@@ -1,5 +1,5 @@
 {
-   "name": "PowerBI-visuals-clustering-kmeans-1.0.3",
+   "name": "PowerBI-visuals-clustering-kmeans",
   "version": "1.0.3",
   "author": {
     "name": "Microsoft",
@@ -15,6 +15,6 @@
   "devDependencies": {
     "tslint": "^4.4.2",
     "tslint-microsoft-contrib": "^4.0.0",
-    "powerbi-visuals-tools": "1.6.2"
+    "powerbi-visuals-tools": "1.7.1"
   }
 }
