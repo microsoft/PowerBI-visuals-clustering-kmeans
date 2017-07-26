@@ -25,6 +25,7 @@
  */
 module powerbi.extensibility.visual {
 
+
     // in order to improve the performance, one can update the <head> only in the initial rendering.
     // set to 'true' if you are using different packages to create the widgets
     const updateHTMLHead: boolean = false;
@@ -33,15 +34,18 @@ module powerbi.extensibility.visual {
 
     //user edit START: interface objects
     interface VisualSettingsPreprocessingParams {//data preprocessing
-        //show: boolean;
+       
+
         scaleData: boolean;
         applyPCA: boolean;
     }
 
     interface VisualSettingsClusterNumParams {//clustering algo
-        //show: boolean;
+      
         numOfClusters: string;
         numClustersMethods: string;
+    }
+
 
     }
 
@@ -68,6 +72,8 @@ module powerbi.extensibility.visual {
         show: boolean;
         textSize: number;
         maxLenDelegateLabel: number;
+    }
+
 
     }
     interface VisualSettingsLegendParams {//legend and pallete 
@@ -84,7 +90,7 @@ module powerbi.extensibility.visual {
         maxIter: number;
         nStart: number;
     }
-     //user edit END: interface objects
+
 
     export class Visual implements IVisual {
         //    private imageDiv: HTMLDivElement;
@@ -102,15 +108,16 @@ module powerbi.extensibility.visual {
         private settings_representative_params: VisualSettingsRepresentativeParams;
         private settings_legend_params: VisualSettingsLegendParams;
         private settings_additional_params: VisualSettingsAdditionalParams;
-        //user edit END: declare private variables
 
 
         public constructor(options: VisualConstructorOptions) {
             if(options && options.element)
                 this.rootElement = options.element;
 
+
             this.headNodes = [];
             this.bodyNodes = [];
+
 
             //user edit START: default parameters
             this.settings_prepocessing_params = <VisualSettingsPreprocessingParams>{
@@ -118,19 +125,22 @@ module powerbi.extensibility.visual {
                 scaleData: false,
                 applyPCA: false,
             };
+
             this.settings_clusterNum_params = <VisualSettingsClusterNumParams>{
                 //   show: false,
                 numOfClusters: "auto",
-                numClustersMethods: "fast",
+                numClustersMethods: "fast"
             };
+
             this.settings_viz_params = <VisualSettingsVizParams>{
                 //show: false,
                 drawEllipse: false,
                 drawConvexHull: false,
                 drawCentroid: false,
                 percentile: 40,
-                weight: 10,
+                weight: 10
             };
+
             this.settings_labeling_params = <VisualSettingsLabelingParams>{
                 show: true,
                 textSize: 8,
@@ -138,27 +148,27 @@ module powerbi.extensibility.visual {
                 maxLenPointLabel: 5,
                 percentile1: 100
             };
+
             this.settings_representative_params = <VisualSettingsRepresentativeParams>{
                 show: false,
                 textSize: 8,
                 maxLenDelegateLabel: 30
-
             };
+
             this.settings_legend_params = <VisualSettingsLegendParams>{
                 show: true,
                 addLegend: true,
                 palleteType: "qPBI"
-
             };
+
             this.settings_additional_params = <VisualSettingsAdditionalParams>{
                 // show: false,
                 sparsify: true,
                 minClusters: 2,
                 maxClusters: 12,
                 maxIter: 10,
-                nStart: 5,
+                nStart: 5
             };
-             //user edit END: default parameters
         }
 
         public update(options: VisualUpdateOptions) {
@@ -172,6 +182,7 @@ module powerbi.extensibility.visual {
             let dataView: DataView = dataViews[0];
             if (!dataView || !dataView.metadata)
                 return;
+
 
             this.updateObjects(dataView.metadata.objects);
 
@@ -306,7 +317,6 @@ module powerbi.extensibility.visual {
             let objectName = options.objectName;
             let objectEnumeration = [];
 
-            //user edit START: populate GUI
             switch (objectName) {
                 case 'settings_prepocessing_params':
                     objectEnumeration.push({
@@ -342,8 +352,6 @@ module powerbi.extensibility.visual {
                             },
                             selector: null
                         });
-
-
                     }
                     break;
 
@@ -412,6 +420,7 @@ module powerbi.extensibility.visual {
                         selector: null
                     });
                     break;
+
                 case 'settings_additional_params':
                     if (this.settings_clusterNum_params.numOfClusters == "auto") {
                         objectEnumeration.push({
@@ -442,6 +451,7 @@ module powerbi.extensibility.visual {
                         });
                     }
                     break;
+
 
             };
             //user edit END: populate GUI
