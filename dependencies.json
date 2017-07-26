@@ -64,6 +64,26 @@
       "name": "seriation",
       "displayName": "seriation: Infrastructure for Ordering Objects",
       "url": "https://cran.r-project.org/web/packages/seriation/index.html"
+    },
+	{
+      "name": "Redmonder",
+      "displayName": "Redmonder: Microsoft-Inspired Color Palettes",
+      "url": "https://cran.r-project.org/web/packages/Redmonder/index.html"
+    },
+    {
+      "name": "plotly",
+      "displayName": "Plotly",
+      "url": "https://cran.r-project.org/web/packages/plotly/index.html"
+    },
+    {
+      "name": "htmlwidgets",
+      "displayName": "HTML Widgets",
+      "url": "https://cran.r-project.org/web/packages/htmlwidgets/index.html"
+    },
+    {
+      "name": "XML",
+      "displayName": "XML",
+      "url": "https://cran.r-project.org/web/packages/XML/index.html"
     }
   ]
 }
