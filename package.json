@@ -1,3 +1,16 @@
 {
-  "name": "visual"
-}
+   "name": "PowerBI-visuals-clustering-kmeans-1.0.3",
+  "version": "1.0.3",
+  "author": {
+    "name": "Microsoft",
+    "email": "pbicvsupport@microsoft.com"
+},
+ "scripts": {
+    "postinstall": "pbiviz update 1.7.0",
+    "pbiviz": "pbiviz",
+    "start": "pbiviz start",
+    "package": "pbiviz package",
+    "lint": "tslint -r \"node_modules/tslint-microsoft-contrib\" \"+(src|test)/**/*.ts\"",
+    "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
+    "test": "karma start"
+  }
