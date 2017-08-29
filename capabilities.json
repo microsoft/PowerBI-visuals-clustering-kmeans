@@ -3,7 +3,7 @@
     {
       "displayName": "Values",
       "description": "Add two or more numeric columns",
-      "kind": "Grouping",
+      "kind": "GroupingOrMeasure",
       "name": "Values"
     },
     {
