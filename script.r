@@ -9,20 +9,13 @@
 # from the third party providers and under separate license terms, and that it is your responsibility to locate, 
 # understand and comply with those license terms.
 # Microsoft grants you no license rights for third-party software or applications that is obtained using this software.
-
-
-##PBI_R_VISUAL: VIZGAL_CLUSTERING  Graphical display of a clustering applied to point cloud 
+#
 # Computes and visualizes a clustering performed with KMEANS clustering algorithm. 
 # Allows user to control number of clusters or to find it automatically. 
 # Provides several options for scaling the data and for visualization of clusters. 
 # INPUT: 
 # The input dataset should include at least two numerical non-constant columns  
 #
-# EXAMPLES:
-# for R environment
-#  data(iris)
-#  dataset=iris[,c(5,1,2,3,4)]
-#  source("visGal_clustering.R") #create graphics
 #
 # WARNINGS:  Time consuming for large datasets
 #
@@ -32,7 +25,7 @@
 #
 # VERSION: 1.0.5
 #
-# R VERSION TESTED: 3.4.1
+# R VERSION TESTED: 3.4.x
 # 
 # AUTHOR: pbicvsupport@microsoft.com
 #
@@ -44,15 +37,15 @@
 source('./r_files/flatten_HTML.r')
 
 
-#DEBUG 
-fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
-if(file.exists(dirname(fileRda)))
-{
-  if(Sys.getenv("RSTUDIO")!="")
-    load(file= fileRda)
-  else
-    save(list = ls(all.names = TRUE), file=fileRda)
-}
+# #DEBUG 
+# fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+# if(file.exists(dirname(fileRda)))
+# {
+#   if(Sys.getenv("RSTUDIO")!="")
+#     load(file= fileRda)
+#   else
+#     save(list = ls(all.names = TRUE), file=fileRda)
+# }
 
 
 options(warn = -1)
@@ -62,14 +55,6 @@ if(!exists("dataset") && exists("Values"))
 
 if(!exists("dataset") && !exists("Values") && exists("PointLabels"))
   dataset = PointLabels
-
-
-#PBI_EXAMPLE_DATASET for debugging purposes
-if(!exists("dataset"))
-{
-  data(iris) #Sepal.Length,Sepal.Width,Petal.Length,Petal.Width,Species
-  dataset = iris[,c(5, 1, 2, 3, 4)]
-}
 
 if(!exists("PointLabels"))
   PointLabels = NULL  
@@ -84,25 +69,6 @@ if(exists("settings_legend_params_show"))
   addLegend = settings_legend_params_show
 
 ############ User Parameters #########
-
-# if(exists("settings_prepocessing_params_show") && settings_prepocessing_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_prepocessing_params_"))
-# if(exists("settings_clusterNum_params_show") && settings_clusterNum_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_clusterNum_params_"))
-# if(exists("settings_viz_params_show") && settings_viz_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_viz_params_"))
-
-# if(exists("settings_labeling_params_show") && settings_labeling_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_labeling_params_"))
-# if(exists("settings_representative_params_show") && settings_representative_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_representative_params_"))
-# if(exists("settings_legend_params_show") && settings_legend_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_legend_params_"))
-# if(exists("settings_additional_params_show") && settings_additional_params_show == FALSE)
-#   rm(list= ls(pattern = "settings_additional_params_"))
-
-
-
 ##PBI_PARAM: Should warnings text be displayed?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 showWarnings = FALSE 
@@ -279,14 +245,6 @@ palleteType = "qPBI"
 if(exists("settings_legend_params_palleteType"))
   palleteType = settings_legend_params_palleteType 
 
-#PBI_PARAM Size of labels on axes
-sizeLabel = 12
-
-#PBI_PARAM Size of warnings font
-sizeWarn = 11
-
-#PBI_PARAM Size of ticks on axes 
-sizeTicks = 8
 
 ###############Library Declarations###############
 
@@ -310,15 +268,21 @@ libraryRequireInstall("vegan")
 libraryRequireInstall("Redmonder")
 
 
-
 ############### Library Declarations ###############
 libraryRequireInstall("ggplot2");
 libraryRequireInstall("plotly")
 ####################################################
 
-libraryRequireInstall("ggplot2")
 
 ###############Internal parameters definitions#################
+#PBI_PARAM Size of labels on axes
+sizeLabel = 11
+
+#PBI_PARAM Size of warnings font
+sizeWarn = 11
+
+#PBI_PARAM Size of ticks on axes 
+sizeTicks = 8
 
 ##PBI_PARAM: the random number generator (RNG) state for random number generation 
 #Type: numeric, Default:42, Range:NA, PossibleValues:NA, Remarks: NA
@@ -402,13 +366,6 @@ calcWSS<-function(mydata, maxClust = maxClusters)
                                              centers = i)$withinss)
   return(wss)
 }
-
-#plot convex hull
-plotCH<-function(xcoord, ycoord, lcolor){
-  hpts <- chull(x = xcoord, y = ycoord)
-  hpts <- c(hpts, hpts[1])
-  lines(xcoord[hpts], ycoord[hpts], col = lcolor, lty = 3)
-}  
 
 #plot CH in ggplot
 ggPlotCH = function (xcoord, ycoord, lcolor,ggp)
@@ -670,50 +627,6 @@ ggplotPoints = function(dfPoints, xla = "X", yla = "Y", with_ellipse = TRUE)
 }
 
 
-#ggplot points
-ggplotPoints1 = function(dfPoints, xla = "X", yla = "Y")
-{
-  dfPoints= dfPoints[order(dfPoints$labels),]
-  
-  gg1 = ggplot()
-  gg1 = gg1 + geom_point(data = dfPoints, mapping = aes(x = xx,y = yy, colour = labels, labels = labels, alpha = labels, size = labels, shape = labels)) 
-  
-  
-  uniqueInd = !duplicated(dfPoints$labels) 
-  
-  
-  gg1 = gg1 + scale_colour_manual(name = "",
-                                  labels = dfPoints$labels[uniqueInd],
-                                  values = dfPoints$col[uniqueInd], 
-                                  breaks = dfPoints$labels[uniqueInd]) 
-  
-  gg1 = gg1 + scale_shape_manual(name = "",
-                                 labels = dfPoints$labels[uniqueInd],
-                                 values = dfPoints$shape[uniqueInd], 
-                                 breaks = dfPoints$labels[uniqueInd]) 
-  
-  gg1 = gg1 + scale_size_manual(name = "",
-                                labels = dfPoints$labels[uniqueInd],
-                                values = dfPoints$size[uniqueInd], 
-                                breaks = dfPoints$labels[uniqueInd]) 
-  
-  gg1 = gg1 + scale_alpha_manual(name = "",
-                                 labels = dfPoints$labels[uniqueInd],
-                                 values = dfPoints$alpha[uniqueInd], 
-                                 breaks = dfPoints$labels[uniqueInd])   
-  
-  
-  
-  gg1 = gg1 + xlab(xla) + ylab(yla)
-  
-  print(gg1)
-  
-  
-  return(gg1)
-  
-}
-
-
 
 UpdateTextInPlotlyMarkers = function(p,usePoints,orig_dataset,mapOrig2markers, tooltips)
 {
@@ -945,9 +858,7 @@ if(!checkDimiensionality || !checkVisualSize)
   myl = factor(colpoints)
   
   levels(myl)=seq(1,length(levels(myl)))
-  #cl$cluster1 = as.numeric(myl)
-  
-  #myl = paste("Cluster ", myl,sep="")
+ 
   myl = paste("Cluster ", as.character(cl$cluster),sep="")
   
   names(colpoints) = myl
@@ -965,8 +876,6 @@ if(!checkDimiensionality || !checkVisualSize)
   if(drawCenters)
   {
     # wrong centroids numbers
-    
-    
     df_centers = data.frame(xx = cl$centers[,1], yy = cl$centers[,2], shape = rep(7,numOfClusters), 
                             labels = paste("Cluster center " , seq(1, length.out  = numOfClusters)), col = drawColors, alpha = rep(1,numOfClusters), 
                             size = rep(pointMarkerSize*2.5,numOfClusters)) 
@@ -989,9 +898,6 @@ if(!checkDimiensionality || !checkVisualSize)
         gg = ggPlotCH (dataset[iii, 1], dataset[iii, 2],lcolor = drawColors[clustr],gg)
     }
   }
-  
-  
-  
   
   
   if(addLabel2clusterDelegate)
@@ -1037,11 +943,6 @@ if(!checkDimiensionality || !checkVisualSize)
 
 if(!showWarnings)
   pbiWarning = NULL
-
-# if(!is.null(pbiWarning) && showWarnings)
-# {
-  #showWarnings = TRUE
-  #pbiWarning = cutStr2Show(pbiWarning, strCex = 0.8)
   
   gg = gg + labs (title = pbiWarning, caption = NULL) + theme_bw() +
     theme(plot.title  = element_text(hjust = 0.5, size = 12),
@@ -1125,8 +1026,8 @@ internalSaveWidget(p, 'out.html')
 ReadFullFileReplaceString('out.html', 'out.html', ',"padding":40,', ',"padding":0,')
 ####################################################
 
-#display in R studio
-if(Sys.getenv("RSTUDIO")!="")
-{print(p)
-  print(gg)}
+# #display in R studio
+# if(Sys.getenv("RSTUDIO")!="")
+# {print(p)
+#   print(gg)}
 
