@@ -26,13 +26,13 @@
 #
 # WARNINGS:  Time consuming for large datasets
 #
-# CREATION DATE: 06/01/2016
+# CREATION DATE: 01/06/2016
 #
-# LAST UPDATE: 04/12/2016
+# LAST UPDATE: 03/25/2018
 #
-# VERSION: 0.0.2
+# VERSION: 1.0.5
 #
-# R VERSION TESTED: 3.2.2
+# R VERSION TESTED: 3.4.1
 # 
 # AUTHOR: pbicvsupport@microsoft.com
 #
@@ -45,14 +45,14 @@ source('./r_files/flatten_HTML.r')
 
 
 #DEBUG 
-# fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
-# if(file.exists(dirname(fileRda)))
-# {
-#   if(Sys.getenv("RSTUDIO")!="")
-#     load(file= fileRda) 
-#   else
-#     save(list = ls(all.names = TRUE), file=fileRda)
-# }
+fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+if(file.exists(dirname(fileRda)))
+{
+  if(Sys.getenv("RSTUDIO")!="")
+    load(file= fileRda)
+  else
+    save(list = ls(all.names = TRUE), file=fileRda)
+}
 
 
 options(warn = -1)
@@ -715,8 +715,17 @@ ggplotPoints1 = function(dfPoints, xla = "X", yla = "Y")
 
 
 
-UpdateTextInPlotlyMarkers = function(p,usePoints,orig_dataset,mapOrig2markers)
+UpdateTextInPlotlyMarkers = function(p,usePoints,orig_dataset,mapOrig2markers, tooltips)
 {
+  if(!is.null(tooltips))
+  {
+    cnt1 = intersect(colnames(tooltips),colnames(orig_dataset))
+    if(length(cnt1))
+      tooltips[,cnt1] = NULL
+    
+    if(ncol(tooltips)>0)
+      orig_dataset = cbind(orig_dataset,tooltips)
+  }
   # for each marker 
   allColNames = colnames(orig_dataset)
   usePointsIndexes = seq(1,nrow(orig_dataset))[usePoints]
@@ -728,12 +737,16 @@ UpdateTextInPlotlyMarkers = function(p,usePoints,orig_dataset,mapOrig2markers)
   charClusSort = as.numeric(sort(as.character(unique(mapOrig2markers$cluster))))
   clusSort = sort(unique(mapOrig2markers$cluster))
   
+  
+  
+  
   for (pi in usePointsIndexes)
   {
     c1 = clusSort[charClusSort==mapOrig2markers$cluster[pi]]
     i1 = mapOrig2markers$map[pi]
     
     tempText = paste(allColNames, "=",orig_dataset[pi,], sep =" ", collapse = "<br>")
+    
     
     p$x$data[[c1]]$text[i1] = tempText
     
@@ -1063,10 +1076,11 @@ if(is.null(pbiWarning))
     usePoints = SparsifyScatter(dataset,minMaxPoints = c(Inf,Inf))
   
   
-  
+  if(!exists("Tooltips"))
+    Tooltips = NULL
   
   #update text: p$x$data[[1]]$text,..., p$x$data[[numCluster]]$text
-  p <- UpdateTextInPlotlyMarkers(p,usePoints,orig_dataset,mapOrig2markers)
+  p <- UpdateTextInPlotlyMarkers(p,usePoints,orig_dataset,mapOrig2markers,Tooltips)
   
   
   # remove markers from dense regions (x,y,text is removed) to make html object smaller
@@ -1105,12 +1119,14 @@ p$x$config$modeBarButtonsToRemove = disabledButtonsList
 p <- config(p, staticPlot = FALSE, editable = FALSE, sendData = FALSE, showLink = FALSE,
             displaylogo = FALSE,  collaborate = FALSE, cloud=FALSE)
 
-internalSaveWidget(p, 'out.html')
 
+internalSaveWidget(p, 'out.html')
+# resolve bug in plotly (margin of 40 px)
+ReadFullFileReplaceString('out.html', 'out.html', ',"padding":40,', ',"padding":0,')
 ####################################################
 
 #display in R studio
-# if(Sys.getenv("RSTUDIO")!="")
-# {print(p)
-#   print(gg)}
+if(Sys.getenv("RSTUDIO")!="")
+{print(p)
+  print(gg)}
 

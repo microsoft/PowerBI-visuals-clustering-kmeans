@@ -5,3 +5,4 @@ dist
 .api/*
 *.log
 
+assets/clustering_custom_RV_HTML_testing.pbix
