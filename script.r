@@ -39,14 +39,14 @@ source('./r_files/flatten_HTML.r')
 
 
 #DEBUG
-fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
-if(file.exists(dirname(fileRda)))
-{
-  if(Sys.getenv("RSTUDIO")!="")
-    load(file= fileRda)
-  else
-    save(list = ls(all.names = TRUE), file=fileRda)
-}
+# fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+# if(file.exists(dirname(fileRda)))
+# {
+#   if(Sys.getenv("RSTUDIO")!="")
+#     load(file= fileRda)
+#   else
+#     save(list = ls(all.names = TRUE), file=fileRda)
+# }
 
 
 options(warn = -1)
@@ -965,11 +965,9 @@ if(!checkDimiensionality || !checkVisualSize)
   }
   
   
-  
   gg = ggplotPoints(df_points,xLab,yLab, with_ellipse = drawEllipse)
   
 
-  
   if(drawConvexHull)
   {
     for(clustr in c(1:numOfClusters))
@@ -1115,10 +1113,11 @@ if(keepOutData)
   ####################################################
   
   #display in R studio
-  if(Sys.getenv("RSTUDIO")!="")
-  {
-    print(p)
-    print(gg)
-  }
+  # DEBUG
+  # if(Sys.getenv("RSTUDIO")!="")
+  # {
+  #   print(p)
+  #   print(gg)
+  # }
   
   
