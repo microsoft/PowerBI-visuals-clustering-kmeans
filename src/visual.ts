@@ -34,8 +34,6 @@ module powerbi.extensibility.visual {
 
     //user edit START: interface objects
     interface VisualSettingsPreprocessingParams {//data preprocessing
-       
-
         scaleData: boolean;
         applyPCA: boolean;
     }
@@ -88,6 +86,19 @@ module powerbi.extensibility.visual {
         nStart: number;
     }
 
+    interface VisualSettingsExportParams {//additional settings 
+        show: boolean;
+        limitExportSize: string;
+        toZip: boolean;
+        extraString1: string;
+        extraString2: string;
+        extraString3: string;
+        extraString4: string;
+        extraString5: string;
+        extraString6: string;
+        extraString7: string;
+    }
+
 
     export class Visual implements IVisual {
         //    private imageDiv: HTMLDivElement;
@@ -105,6 +116,7 @@ module powerbi.extensibility.visual {
         private settings_representative_params: VisualSettingsRepresentativeParams;
         private settings_legend_params: VisualSettingsLegendParams;
         private settings_additional_params: VisualSettingsAdditionalParams;
+        private settings_export_params: VisualSettingsExportParams;
 
 
         public constructor(options: VisualConstructorOptions) {
@@ -165,6 +177,19 @@ module powerbi.extensibility.visual {
                 maxClusters: 12,
                 maxIter: 10,
                 nStart: 5
+            };
+            this.settings_export_params = <VisualSettingsExportParams>{
+                // show: false,
+                show: false,
+                limitExportSize: "10000",
+                toZip: true,
+                extraString1:"",
+                extraString2:"",
+                extraString3:"",
+                extraString4:"",
+                extraString5:"",
+                extraString6:"",
+                extraString7:""
             };
         }
 
@@ -307,6 +332,19 @@ module powerbi.extensibility.visual {
                 maxIter: getValue<number>(objects, 'settings_additional_params', 'maxIter', 10),
                 nStart: getValue<number>(objects, 'settings_additional_params', 'nStart', 5),
             };
+            this.settings_export_params = <VisualSettingsExportParams>{
+                //show: getValue<boolean>(objects, 'settings_additional_params', 'show', false),
+                show: getValue<boolean>(objects, 'settings_export_params', 'show', false),
+                limitExportSize: getValue<string>(objects, 'settings_export_params', 'limitExportSize', '10000'),
+                toZip: getValue<boolean>(objects, 'settings_export_params', 'toZip', true),
+                extraString1:getValue<string>(objects, 'settings_export_params', 'extraString1', ''),
+                extraString2:getValue<string>(objects, 'settings_export_params', 'extraString2', ''),
+                extraString3:getValue<string>(objects, 'settings_export_params', 'extraString3', ''),
+                extraString4:getValue<string>(objects, 'settings_export_params', 'extraString4', ''),
+                extraString5:getValue<string>(objects, 'settings_export_params', 'extraString5', ''),
+                extraString6:getValue<string>(objects, 'settings_export_params', 'extraString6', ''),
+                extraString7:getValue<string>(objects, 'settings_export_params', 'extraString7', '')
+            };
             //user edit END: update params
         }
         
@@ -447,6 +485,24 @@ module powerbi.extensibility.visual {
                             selector: null
                         });
                     }
+                    break;
+                    case 'settings_export_params':
+                    objectEnumeration.push({
+                        objectName: objectName,
+                        properties: {
+                            show: this.settings_export_params.show,
+                            limitExportSize: this.settings_export_params.limitExportSize,
+                            toZip: this.settings_export_params.toZip,
+                            extraString1: this.settings_export_params.extraString1,
+                            extraString2: this.settings_export_params.extraString2,
+                            extraString3: this.settings_export_params.extraString3,
+                            extraString4: this.settings_export_params.extraString4,
+                            extraString5: this.settings_export_params.extraString5,
+                            extraString6: this.settings_export_params.extraString6,
+                            extraString7: this.settings_export_params.extraString7
+                        },
+                        selector: null
+                    });
                     break;
 
 

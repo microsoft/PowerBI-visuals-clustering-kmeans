@@ -37,15 +37,16 @@
 source('./r_files/flatten_HTML.r')
 
 
-# #DEBUG 
-# fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
-# if(file.exists(dirname(fileRda)))
-# {
-#   if(Sys.getenv("RSTUDIO")!="")
-#     load(file= fileRda)
-#   else
-#     save(list = ls(all.names = TRUE), file=fileRda)
-# }
+
+#DEBUG
+fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+if(file.exists(dirname(fileRda)))
+{
+  if(Sys.getenv("RSTUDIO")!="")
+    load(file= fileRda)
+  else
+    save(list = ls(all.names = TRUE), file=fileRda)
+}
 
 
 options(warn = -1)
@@ -246,6 +247,42 @@ if(exists("settings_legend_params_palleteType"))
   palleteType = settings_legend_params_palleteType 
 
 
+
+#Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
+keepOutData = FALSE
+if(exists("settings_export_params_show"))
+  keepOutData = settings_export_params_show 
+
+
+extraString1 = ""
+if(exists("settings_export_params_extraString1"))
+  extraString1 = settings_export_params_extraString1 
+extraString2 = ""
+if(exists("settings_export_params_extraString2"))
+  extraString2 = settings_export_params_extraString2
+
+extraString3 = ""
+if(exists("settings_export_params_extraString3"))
+  extraString3 = settings_export_params_extraString3 
+extraString4 = ""
+if(exists("settings_export_params_extraString4"))
+  extraString4 = settings_export_params_extraString4
+
+extraString5 = ""
+if(exists("settings_export_params_extraString5"))
+  extraString5= settings_export_params_extraString5 
+extraString6 = ""
+if(exists("settings_export_params_extraString6"))
+  extraString6 = settings_export_params_extraString6
+extraString7 = ""
+if(exists("settings_export_params_extraString6"))
+  extraString7 = settings_export_params_extraString7
+
+extraString = paste(extraString1,extraString2,extraString3,extraString4,extraString5,extraString6,extraString7, sep ="")
+
+
+print('keepOutData = settings_export_params_show')
+
 ###############Library Declarations###############
 
 libraryRequireInstall = function(packageName, ...)
@@ -266,6 +303,7 @@ libraryRequireInstall("mclust")
 libraryRequireInstall("apcluster")
 libraryRequireInstall("vegan")
 libraryRequireInstall("Redmonder")
+libraryRequireInstall("caTools")
 
 
 ############### Library Declarations ###############
@@ -760,6 +798,22 @@ goodPlotDimension = function(minWidthInch = 3,minHeightInch = 2.2)
 }
 
 
+ConvertDF64encoding = function (df, withoutEncoding = FALSE)
+{
+  header_row <- paste(names(df), collapse=", ")
+  tab <- apply(df, 1, function(x)paste(x, collapse=", "))
+  
+  if(withoutEncoding){
+    text <- paste(c(header_row, tab), collapse="\n")
+    x <- text
+  }
+  else
+  {
+    text <- paste(c(header_row, tab), collapse="\n")
+    x <- caTools::base64encode(text)
+  }
+  return(x)
+}
 
 ###############Upfront input correctness validations (where possible)#################
 
@@ -807,13 +861,16 @@ if(!goodPlotDimension(minWidthInch = 5,minHeightInch = 3.5))
 
 ##############Main Visualization script###########
 
-
+print('Start Main Visualization script')
 set.seed(randSeed)
 
 if(!checkDimiensionality || !checkVisualSize)
 { 
   gg = ggplot()    
 }else{
+  if(keepOutData)
+    datasetBeforeScaling = dataset
+  
   if(scaleData)
   {
     dataset<-as.data.frame(scale(dataset))
@@ -836,9 +893,13 @@ if(!checkDimiensionality || !checkVisualSize)
   # KMEANS with known numberOfClusters
   cl <- kmeans(dataset, centers = numOfClusters, iter.max = iter.max, nstart = nstart)
   
+  print("Done cl <- kmeans")
+  
   numOfClusters <- length(unique(cl$cluster))
   drawColors <- myPallete(numOfClusters,palleteType = palleteType)
   
+  if(keepOutData)
+    datasetBeforeScaling$cluster = cl$cluster
   # visualize first two coordinates 
   #drawColors = c("red","green","blue")#TEMP
   
@@ -887,6 +948,7 @@ if(!checkDimiensionality || !checkVisualSize)
   
   gg = ggplotPoints(df_points,xLab,yLab, with_ellipse = drawEllipse)
   
+  print("Done gg = ggplotPoints")
   
   
   if(drawConvexHull)
@@ -1013,7 +1075,16 @@ if(is.null(pbiWarning))
   
 }
 ############# Create and save widget ###############
+print('Before getStringOf64encoding')
 
+if(keepOutData)
+{
+  #outDataString = getStringOf64encoding(datasetBeforeScaling)
+  outDataString64 = ConvertDF64encoding(datasetBeforeScaling)
+  outDataStringPlane = ConvertDF64encoding(datasetBeforeScaling, withoutEncoding = TRUE)
+ # outDataString = 'Q29sMSwgQ29sMiwgQ29sMywgQ29sNApNYWxlLCAgMTIzNDUsICA3NiwgYWJjCkZlbWFsZSwgNTQ1NDU0LCAxMDUsIGRlZg=='
+}
+print('Done getStringOf64encoding')
 
 disabledButtonsList <- list('toImage', 'sendDataToCloud', 'zoom2d', 'pan', 'pan2d', 'select2d', 'lasso2d', 'hoverClosestCartesian', 'hoverCompareCartesian')
 p$x$config$modeBarButtonsToRemove = disabledButtonsList
@@ -1024,10 +1095,70 @@ p <- config(p, staticPlot = FALSE, editable = FALSE, sendData = FALSE, showLink 
 internalSaveWidget(p, 'out.html')
 # resolve bug in plotly (margin of 40 px)
 ReadFullFileReplaceString('out.html', 'out.html', ',"padding":40,', ',"padding":0,')
+
+if(keepOutData)
+{
+  print('Start of if(keepOutData) {...}')
+#ns0 = '<a href=""   target="data.csv"   download="exportData.csv" style="position: absolute; top:0px; left: 0px; z-index: 20000;" id = "mydataURL">export</a>'
+  linkElem = '\n<a href=""  download="data.csv"  style="position: absolute; top:0px; left: 0px; z-index: 20000;" id = "mydataURL">export</a>\n'
+#ns1 = paste('<script> var outDataString64 = "data:;base64,', outDataString64, '";', sep ='')
+updateLinkElem = paste('<script>\n link_element = document.getElementById("mydataURL");link_element.href = outDataString64href;', '\n</script> ', sep =' ')
+#ns3 = '</body>'
+# ns3a = '</script> </body>'
+# ns4 ='<script></script></body>'
+# ns5 ='</body>'
+#ns = paste(ns0,ns1,ns2,ns3,sep =" ")
+#ns = paste(ns5,sep =" ")
+#ReadFullFileReplaceString('out.html', 'out.html', '</body>', ns)
+# ns = '<button type="button" style="position: absolute; top:0px; left: 0px; z-index: 10000;">Export data</button></body>'
+# ReadFullFileReplaceString('out.html', 'out.html', '</body>', ns)
+#<input type="text" value="Hello World" id="myInput">
+#nsA1 = paste('<input type="text" value="', outDataString, '" id="outDataString">')
+#nsA2 = paste('<input type="text" value="', outDataStringPlane, '" id="outDataStringPlane">')
+#nsA = paste(nsA1,nsA2,'</body>',sep =" ")
+#ReadFullFileReplaceString('out.html', 'out.html', '</body>', nsA)
+
+varPlane = "" #paste('<script> outDataStringPlane =`', outDataStringPlane, '`; </script>', sep ="")
+var64 = paste('<script> outDataString64 ="', outDataString64, '"; </script>', sep ="")
+var64href = paste('<script> outDataString64href ="data:;base64,', outDataString64, '"; </script>', sep ="")
+
+buttonElem = '<button style="position: absolute; top:20px; left: 0px; z-index: 20000;"  onclick="myFunctionCopy(1)">copy to clipboard</button>'
+funcScript = '<script> 
+function myFunctionCopy(is64) 
+{
+  const el = document.createElement("textarea");
+  if(is64)
+  {
+  el.value = atob(outDataString64);
+  }
+  else
+  {
+  el.value = outDataStringPlane;
+  }
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);};	
+  </script>'
+
+endOfBody = paste(linkElem, varPlane,var64, var64href,updateLinkElem,funcScript, buttonElem,'\n</body>',sep ="")
+ReadFullFileReplaceString('out.html', 'out.html', '</body>', endOfBody)
+
+
+
+ 
+#  if(nchar(extraString)>2)
+#  {
+#    extraString = paste(extraString, '\n</body>', sep ="");
+#     ReadFullFileReplaceString('out.html', 'out.html', '</body>', extraString)
+# }
+
+print('End of if(keepOutData) {...}')
+}
 ####################################################
 
-# #display in R studio
-# if(Sys.getenv("RSTUDIO")!="")
-# {print(p)
-#   print(gg)}
+#display in R studio
+if(Sys.getenv("RSTUDIO")!="")
+{print(p)
+  print(gg)}
 

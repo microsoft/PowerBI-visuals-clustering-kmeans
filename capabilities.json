@@ -385,7 +385,104 @@
           }
         }
       }
+    },
+    "settings_export_params": {
+      "displayName": "Export data",
+      "description": "Export result of clustering",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "limitExportSize": {
+          "displayName": "Maximum exported rows",
+          "description": "Limit number of rows",
+          "type": {
+            "enumeration": [{
+                "displayName": "1000",
+                "value": "1000"
+              },
+              {
+                "displayName": "10000",
+                "value": "10000"
+              },
+              {
+                "displayName": "50000",
+                "value": "50000"
+              },
+              {
+                "displayName": "unlimited",
+                "value": "100000"
+              }
+            ]
+          }
+        },
+        "method": {
+          "displayName": "Method",
+          "description": "Method",
+          "type": {
+            "enumeration": [{
+                "displayName": "copy to clipboard",
+                "value": "copy"
+              },
+              {
+                "displayName": "download (only service)",
+                "value": "download"
+              }
+            ]
+          }
+        },
+      "toZip": {
+        "displayName": "Zip",
+        "type": {
+          "bool": true
+        }
+      },
+      "extraString1": {
+        "displayName": "extraString1",
+        "type": {
+          "text": true
+        }
+      },
+      "extraString2": {
+        "displayName": "extraString2",
+        "type": {
+          "text": true
+        }
+      },
+      "extraString3": {
+        "displayName": "extraString3",
+        "type": {
+          "text": true
+        }
+      },
+      "extraString4": {
+        "displayName": "extraString4",
+        "type": {
+          "text": true
+        }
+      },
+      "extraString5": {
+        "displayName": "extraString5",
+        "type": {
+          "text": true
+        }
+      },
+      "extraString6": {
+        "displayName": "extraString6",
+        "type": {
+          "text": true
+        }
+      },
+      "extraString7": {
+        "displayName": "extraString7",
+        "type": {
+          "text": true
+        }
+      }
     }
+  }
   },
   "suppressDefaultTitle": true
 }
