@@ -63,13 +63,15 @@ if(!exists("PointLabels"))
 if(!is.null(PointLabels))
   dataset = cbind(PointLabels,dataset)
 
+
+############ User Parameters #########
+
 ##PBI_PARAM: Specify if legend is to be present on the plot
 #Type: logical, Default:TRUE, Range:NA, PossibleValues:NA, Remarks: NA
 addLegend = TRUE
 if(exists("settings_legend_params_show"))
   addLegend = settings_legend_params_show
 
-############ User Parameters #########
 ##PBI_PARAM: Should warnings text be displayed?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 showWarnings = FALSE 
@@ -247,41 +249,24 @@ if(exists("settings_legend_params_palleteType"))
   palleteType = settings_legend_params_palleteType 
 
 
-
+##PBI_PARAM: export out data to HTML?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
 keepOutData = FALSE
 if(exists("settings_export_params_show"))
   keepOutData = settings_export_params_show 
 
+##PBI_PARAM: method of export interface
+#Type: string , Default:"copy",  Range:NA, PossibleValues:"copy", "download",  Remarks: NA
+exportMethod = "copy"
+if(exists("settings_export_params_method"))
+  exportMethod = settings_export_params_method 
 
-extraString1 = ""
-if(exists("settings_export_params_extraString1"))
-  extraString1 = settings_export_params_extraString1 
-extraString2 = ""
-if(exists("settings_export_params_extraString2"))
-  extraString2 = settings_export_params_extraString2
+##PBI_PARAM: limit the out table exported
+#Type: string , Default:1000,  Range:NA, PossibleValues:"1000", "10000", Inf,  Remarks: NA
+limitExportSize = 1000
+if(exists("settings_export_params_limitExportSize"))
+  limitExportSize = as.numeric(settings_export_params_limitExportSize)
 
-extraString3 = ""
-if(exists("settings_export_params_extraString3"))
-  extraString3 = settings_export_params_extraString3 
-extraString4 = ""
-if(exists("settings_export_params_extraString4"))
-  extraString4 = settings_export_params_extraString4
-
-extraString5 = ""
-if(exists("settings_export_params_extraString5"))
-  extraString5= settings_export_params_extraString5 
-extraString6 = ""
-if(exists("settings_export_params_extraString6"))
-  extraString6 = settings_export_params_extraString6
-extraString7 = ""
-if(exists("settings_export_params_extraString6"))
-  extraString7 = settings_export_params_extraString7
-
-extraString = paste(extraString1,extraString2,extraString3,extraString4,extraString5,extraString6,extraString7, sep ="")
-
-
-print('keepOutData = settings_export_params_show')
 
 ###############Library Declarations###############
 
@@ -815,6 +800,49 @@ ConvertDF64encoding = function (df, withoutEncoding = FALSE)
   return(x)
 }
 
+
+KeepOutDataInHTML = function(df, htmlFile = 'out.html', exportMethod = "copy", limitExportSize = 1000)
+{
+  if(nrow(datasetBeforeScaling)>limitExportSize)
+    datasetBeforeScaling = datasetBeforeScaling[1:limitExportSize,]
+  
+  outDataString64 = ConvertDF64encoding(datasetBeforeScaling)
+  
+  linkElem = '\n<a href=""  download="data.csv"  style="position: absolute; top:0px; left: 0px; z-index: 20000;" id = "mydataURL">export</a>\n'
+  updateLinkElem = paste('<script>\n link_element = document.getElementById("mydataURL");link_element.href = outDataString64href;', '\n</script> ', sep =' ')
+  var64 = paste('<script> outDataString64 ="', outDataString64, '"; </script>', sep ="")
+  var64href = paste('<script> outDataString64href ="data:;base64,', outDataString64, '"; </script>', sep ="")
+  
+  buttonElem = '<button style="position: absolute; top:0px; left: 0px; z-index: 20000;"  onclick="myFunctionCopy(1)">copy to clipboard</button>'
+  funcScript = '<script> 
+  function myFunctionCopy(is64) 
+  {
+  const el = document.createElement("textarea");
+  if(is64)
+  {
+  el.value = atob(outDataString64);
+  }
+  else
+  {
+  el.value = outDataStringPlane;
+  }
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);};	
+  </script>'
+  
+  if(exportMethod == "copy")
+    endOfBody = paste(var64,funcScript, buttonElem,'\n</body>',sep ="")
+  else#"download"
+    endOfBody = paste(linkElem,var64, var64href,updateLinkElem,'\n</body>',sep ="")
+  
+  ReadFullFileReplaceString('out.html', 'out.html', '</body>', endOfBody)
+  
+}
+
+
+
 ###############Upfront input correctness validations (where possible)#################
 
 pbiWarning<-NULL
@@ -828,8 +856,8 @@ orig_dataset <- dataset #used later for delegates
 # verify correctness of dataset
 useColumns<-sapply(dataset, correctColumn)
 
- if(sum(useColumns[-1])<ncol(dataset)-1)
-   pbiWarning<-cutStr2Show("At least one of the columns was not numeric, or constant",strCex = sizeWarn/6, partAvailable = 0.85)
+if(sum(useColumns[-1])<ncol(dataset)-1)
+  pbiWarning<-cutStr2Show("At least one of the columns was not numeric, or constant",strCex = sizeWarn/6, partAvailable = 0.85)
 
 #exclude incopmatible columns
 dataset<-as.data.frame(dataset[,useColumns])
@@ -857,11 +885,10 @@ if(!goodPlotDimension(minWidthInch = 3,minHeightInch = 2.2))
 #addLegend, check if output window is small turn off the legend 
 if(!goodPlotDimension(minWidthInch = 5,minHeightInch = 3.5))
   addLegend = FALSE
-  
+
 
 ##############Main Visualization script###########
 
-print('Start Main Visualization script')
 set.seed(randSeed)
 
 if(!checkDimiensionality || !checkVisualSize)
@@ -893,22 +920,15 @@ if(!checkDimiensionality || !checkVisualSize)
   # KMEANS with known numberOfClusters
   cl <- kmeans(dataset, centers = numOfClusters, iter.max = iter.max, nstart = nstart)
   
-  print("Done cl <- kmeans")
-  
   numOfClusters <- length(unique(cl$cluster))
   drawColors <- myPallete(numOfClusters,palleteType = palleteType)
   
   if(keepOutData)
     datasetBeforeScaling$cluster = cl$cluster
-  # visualize first two coordinates 
-  #drawColors = c("red","green","blue")#TEMP
+  
   
   if(drawPoints) colpoints = drawColors[cl$cluster] else colpoints = NULL 
   
-  # # in case of legend extend xlim to the right by 20%
-  # xrange = range( dataset[, 1] )
-  # drange = xrange[2] - xrange[1]
-  # xLim = c(xrange[1] - 0.01*drange, xrange[2] + 0.01*drange + drange*0.20*addLegend)
   
   xLab = cutStr2Show(names(dataset)[1], strCex = sizeLabel/6, isH = TRUE, partAvailable = 0.8)
   yLab = cutStr2Show(names(dataset)[2], strCex = sizeLabel/6, isH = FALSE, partAvailable = 0.8)
@@ -919,7 +939,7 @@ if(!checkDimiensionality || !checkVisualSize)
   myl = factor(colpoints)
   
   levels(myl)=seq(1,length(levels(myl)))
- 
+  
   myl = paste("Cluster ", as.character(cl$cluster),sep="")
   
   names(colpoints) = myl
@@ -948,8 +968,7 @@ if(!checkDimiensionality || !checkVisualSize)
   
   gg = ggplotPoints(df_points,xLab,yLab, with_ellipse = drawEllipse)
   
-  print("Done gg = ggplotPoints")
-  
+
   
   if(drawConvexHull)
   {
@@ -997,7 +1016,7 @@ if(!checkDimiensionality || !checkVisualSize)
   
   gg = gg + theme_bw()
   
- 
+  
   
   
   
@@ -1005,17 +1024,17 @@ if(!checkDimiensionality || !checkVisualSize)
 
 if(!showWarnings)
   pbiWarning = NULL
-  
-  gg = gg + labs (title = pbiWarning, caption = NULL) + theme_bw() +
-    theme(plot.title  = element_text(hjust = 0.5, size = 12),
-          axis.title=element_text(size =  sizeLabel),
-          axis.text=element_text(size =  sizeTicks),
-          panel.border = element_blank())
-  
-  if(!addLegend)
-    gg = gg +  theme(legend.position="none")
-  
-#}
+
+gg = gg + labs (title = pbiWarning, caption = NULL) + theme_bw() +
+  theme(plot.title  = element_text(hjust = 0.5, size = 12),
+        axis.title=element_text(size =  sizeLabel),
+        axis.text=element_text(size =  sizeTicks),
+        panel.border = element_blank())
+
+if(!addLegend)
+  gg = gg +  theme(legend.position="none")
+
+
 
 # convert to plotly 
 p <- plotly_build(gg)
@@ -1075,16 +1094,8 @@ if(is.null(pbiWarning))
   
 }
 ############# Create and save widget ###############
-print('Before getStringOf64encoding')
 
-if(keepOutData)
-{
-  #outDataString = getStringOf64encoding(datasetBeforeScaling)
-  outDataString64 = ConvertDF64encoding(datasetBeforeScaling)
-  outDataStringPlane = ConvertDF64encoding(datasetBeforeScaling, withoutEncoding = TRUE)
- # outDataString = 'Q29sMSwgQ29sMiwgQ29sMywgQ29sNApNYWxlLCAgMTIzNDUsICA3NiwgYWJjCkZlbWFsZSwgNTQ1NDU0LCAxMDUsIGRlZg=='
-}
-print('Done getStringOf64encoding')
+
 
 disabledButtonsList <- list('toImage', 'sendDataToCloud', 'zoom2d', 'pan', 'pan2d', 'select2d', 'lasso2d', 'hoverClosestCartesian', 'hoverCompareCartesian')
 p$x$config$modeBarButtonsToRemove = disabledButtonsList
@@ -1093,72 +1104,21 @@ p <- config(p, staticPlot = FALSE, editable = FALSE, sendData = FALSE, showLink 
 
 
 internalSaveWidget(p, 'out.html')
+
 # resolve bug in plotly (margin of 40 px)
 ReadFullFileReplaceString('out.html', 'out.html', ',"padding":40,', ',"padding":0,')
 
 if(keepOutData)
-{
-  print('Start of if(keepOutData) {...}')
-#ns0 = '<a href=""   target="data.csv"   download="exportData.csv" style="position: absolute; top:0px; left: 0px; z-index: 20000;" id = "mydataURL">export</a>'
-  linkElem = '\n<a href=""  download="data.csv"  style="position: absolute; top:0px; left: 0px; z-index: 20000;" id = "mydataURL">export</a>\n'
-#ns1 = paste('<script> var outDataString64 = "data:;base64,', outDataString64, '";', sep ='')
-updateLinkElem = paste('<script>\n link_element = document.getElementById("mydataURL");link_element.href = outDataString64href;', '\n</script> ', sep =' ')
-#ns3 = '</body>'
-# ns3a = '</script> </body>'
-# ns4 ='<script></script></body>'
-# ns5 ='</body>'
-#ns = paste(ns0,ns1,ns2,ns3,sep =" ")
-#ns = paste(ns5,sep =" ")
-#ReadFullFileReplaceString('out.html', 'out.html', '</body>', ns)
-# ns = '<button type="button" style="position: absolute; top:0px; left: 0px; z-index: 10000;">Export data</button></body>'
-# ReadFullFileReplaceString('out.html', 'out.html', '</body>', ns)
-#<input type="text" value="Hello World" id="myInput">
-#nsA1 = paste('<input type="text" value="', outDataString, '" id="outDataString">')
-#nsA2 = paste('<input type="text" value="', outDataStringPlane, '" id="outDataStringPlane">')
-#nsA = paste(nsA1,nsA2,'</body>',sep =" ")
-#ReadFullFileReplaceString('out.html', 'out.html', '</body>', nsA)
+  KeepOutDataInHTML(df = datasetBeforeScaling, htmlFile = 'out.html', exportMethod = exportMethod, limitExportSize = limitExportSize)
+  
 
-varPlane = "" #paste('<script> outDataStringPlane =`', outDataStringPlane, '`; </script>', sep ="")
-var64 = paste('<script> outDataString64 ="', outDataString64, '"; </script>', sep ="")
-var64href = paste('<script> outDataString64href ="data:;base64,', outDataString64, '"; </script>', sep ="")
-
-buttonElem = '<button style="position: absolute; top:20px; left: 0px; z-index: 20000;"  onclick="myFunctionCopy(1)">copy to clipboard</button>'
-funcScript = '<script> 
-function myFunctionCopy(is64) 
-{
-  const el = document.createElement("textarea");
-  if(is64)
+  ####################################################
+  
+  #display in R studio
+  if(Sys.getenv("RSTUDIO")!="")
   {
-  el.value = atob(outDataString64);
+    print(p)
+    print(gg)
   }
-  else
-  {
-  el.value = outDataStringPlane;
-  }
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand("copy");
-  document.body.removeChild(el);};	
-  </script>'
-
-endOfBody = paste(linkElem, varPlane,var64, var64href,updateLinkElem,funcScript, buttonElem,'\n</body>',sep ="")
-ReadFullFileReplaceString('out.html', 'out.html', '</body>', endOfBody)
-
-
-
- 
-#  if(nchar(extraString)>2)
-#  {
-#    extraString = paste(extraString, '\n</body>', sep ="");
-#     ReadFullFileReplaceString('out.html', 'out.html', '</body>', extraString)
-# }
-
-print('End of if(keepOutData) {...}')
-}
-####################################################
-
-#display in R studio
-if(Sys.getenv("RSTUDIO")!="")
-{print(p)
-  print(gg)}
-
+  
+  

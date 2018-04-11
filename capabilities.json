@@ -432,55 +432,7 @@
               }
             ]
           }
-        },
-      "toZip": {
-        "displayName": "Zip",
-        "type": {
-          "bool": true
         }
-      },
-      "extraString1": {
-        "displayName": "extraString1",
-        "type": {
-          "text": true
-        }
-      },
-      "extraString2": {
-        "displayName": "extraString2",
-        "type": {
-          "text": true
-        }
-      },
-      "extraString3": {
-        "displayName": "extraString3",
-        "type": {
-          "text": true
-        }
-      },
-      "extraString4": {
-        "displayName": "extraString4",
-        "type": {
-          "text": true
-        }
-      },
-      "extraString5": {
-        "displayName": "extraString5",
-        "type": {
-          "text": true
-        }
-      },
-      "extraString6": {
-        "displayName": "extraString6",
-        "type": {
-          "text": true
-        }
-      },
-      "extraString7": {
-        "displayName": "extraString7",
-        "type": {
-          "text": true
-        }
-      }
     }
   }
   },

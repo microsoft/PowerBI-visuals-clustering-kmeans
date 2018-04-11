@@ -88,15 +88,8 @@ module powerbi.extensibility.visual {
 
     interface VisualSettingsExportParams {//additional settings 
         show: boolean;
-        limitExportSize: string;
-        toZip: boolean;
-        extraString1: string;
-        extraString2: string;
-        extraString3: string;
-        extraString4: string;
-        extraString5: string;
-        extraString6: string;
-        extraString7: string;
+        limitExportSize: string;  
+        method: string;
     }
 
 
@@ -179,17 +172,9 @@ module powerbi.extensibility.visual {
                 nStart: 5
             };
             this.settings_export_params = <VisualSettingsExportParams>{
-                // show: false,
                 show: false,
                 limitExportSize: "10000",
-                toZip: true,
-                extraString1:"",
-                extraString2:"",
-                extraString3:"",
-                extraString4:"",
-                extraString5:"",
-                extraString6:"",
-                extraString7:""
+                method:"copy"
             };
         }
 
@@ -336,14 +321,7 @@ module powerbi.extensibility.visual {
                 //show: getValue<boolean>(objects, 'settings_additional_params', 'show', false),
                 show: getValue<boolean>(objects, 'settings_export_params', 'show', false),
                 limitExportSize: getValue<string>(objects, 'settings_export_params', 'limitExportSize', '10000'),
-                toZip: getValue<boolean>(objects, 'settings_export_params', 'toZip', true),
-                extraString1:getValue<string>(objects, 'settings_export_params', 'extraString1', ''),
-                extraString2:getValue<string>(objects, 'settings_export_params', 'extraString2', ''),
-                extraString3:getValue<string>(objects, 'settings_export_params', 'extraString3', ''),
-                extraString4:getValue<string>(objects, 'settings_export_params', 'extraString4', ''),
-                extraString5:getValue<string>(objects, 'settings_export_params', 'extraString5', ''),
-                extraString6:getValue<string>(objects, 'settings_export_params', 'extraString6', ''),
-                extraString7:getValue<string>(objects, 'settings_export_params', 'extraString7', '')
+                method:getValue<string>(objects, 'settings_export_params', 'method', 'copy')
             };
             //user edit END: update params
         }
@@ -480,7 +458,7 @@ module powerbi.extensibility.visual {
                                 // show: this.settings_additional_params.show,
                                 maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
                                 nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
-                                 sparsify: this.settings_additional_params.sparsify
+                                sparsify: this.settings_additional_params.sparsify
                             },
                             selector: null
                         });
@@ -492,14 +470,7 @@ module powerbi.extensibility.visual {
                         properties: {
                             show: this.settings_export_params.show,
                             limitExportSize: this.settings_export_params.limitExportSize,
-                            toZip: this.settings_export_params.toZip,
-                            extraString1: this.settings_export_params.extraString1,
-                            extraString2: this.settings_export_params.extraString2,
-                            extraString3: this.settings_export_params.extraString3,
-                            extraString4: this.settings_export_params.extraString4,
-                            extraString5: this.settings_export_params.extraString5,
-                            extraString6: this.settings_export_params.extraString6,
-                            extraString7: this.settings_export_params.extraString7
+                            method: this.settings_export_params.method
                         },
                         selector: null
                     });
