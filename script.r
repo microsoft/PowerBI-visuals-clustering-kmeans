@@ -9,29 +9,23 @@
 # from the third party providers and under separate license terms, and that it is your responsibility to locate, 
 # understand and comply with those license terms.
 # Microsoft grants you no license rights for third-party software or applications that is obtained using this software.
-
-##PBI_R_VISUAL: VIZGAL_CLUSTERING  Graphical display of a clustering applied to point cloud 
+#
 # Computes and visualizes a clustering performed with KMEANS clustering algorithm. 
 # Allows user to control number of clusters or to find it automatically. 
 # Provides several options for scaling the data and for visualization of clusters. 
 # INPUT: 
 # The input dataset should include at least two numerical non-constant columns  
 #
-# EXAMPLES:
-# for R environment
-#  data(iris)
-#  dataset=iris[,c(5,1,2,3,4)]
-#  source("visGal_clustering.R") #create graphics
 #
 # WARNINGS:  Time consuming for large datasets
 #
-# CREATION DATE: 06/01/2016
+# CREATION DATE: 01/06/2016
 #
-# LAST UPDATE: 04/12/2016
+# LAST UPDATE: 03/25/2018
 #
-# VERSION: 0.0.2
+# VERSION: 1.0.5
 #
-# R VERSION TESTED: 3.2.2
+# R VERSION TESTED: 3.4.x
 # 
 # AUTHOR: pbicvsupport@microsoft.com
 #
@@ -40,10 +34,22 @@
 #             https://cran.r-project.org/web/packages/NbClust/NbClust.pdf
 
 
-#DEBUG purposes
-#save(list = ls(all.names = TRUE), file='C:/Users/boefraty/projects/PBI/R/tempData.Rda')
-#load(file='C:/Users/boefraty/projects/PBI/R/tempData.Rda')
+source('./r_files/flatten_HTML.r')
 
+
+
+#DEBUG
+# fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
+# if(file.exists(dirname(fileRda)))
+# {
+#   if(Sys.getenv("RSTUDIO")!="")
+#     load(file= fileRda)
+#   else
+#     save(list = ls(all.names = TRUE), file=fileRda)
+# }
+
+
+options(warn = -1)
 
 if(!exists("dataset") && exists("Values"))
   dataset = Values
@@ -51,19 +57,14 @@ if(!exists("dataset") && exists("Values"))
 if(!exists("dataset") && !exists("Values") && exists("PointLabels"))
   dataset = PointLabels
 
-
-#PBI_EXAMPLE_DATASET for debugging purposes
-if(!exists("dataset"))
-{
-  data(iris) #Sepal.Length,Sepal.Width,Petal.Length,Petal.Width,Species
-  dataset = iris[,c(5, 1, 2, 3, 4)]
-}
-
 if(!exists("PointLabels"))
   PointLabels = NULL  
 
 if(!is.null(PointLabels))
   dataset = cbind(PointLabels,dataset)
+
+
+############ User Parameters #########
 
 ##PBI_PARAM: Specify if legend is to be present on the plot
 #Type: logical, Default:TRUE, Range:NA, PossibleValues:NA, Remarks: NA
@@ -71,26 +72,9 @@ addLegend = TRUE
 if(exists("settings_legend_params_show"))
   addLegend = settings_legend_params_show
 
-############ User Parameters #########
-
-if(exists("settings_prepocessing_params_show") && settings_prepocessing_params_show == FALSE)
-  rm(list= ls(pattern = "settings_prepocessing_params_"))
-if(exists("settings_clusterNum_params_show") && settings_clusterNum_params_show == FALSE)
-  rm(list= ls(pattern = "settings_clusterNum_params_"))
-if(exists("settings_viz_params_show") && settings_viz_params_show == FALSE)
-  rm(list= ls(pattern = "settings_viz_params_"))
-if(exists("settings_labeling_params_show") && settings_labeling_params_show == FALSE)
-  rm(list= ls(pattern = "settings_labeling_params_"))
-if(exists("settings_representative_params_show") && settings_representative_params_show == FALSE)
-  rm(list= ls(pattern = "settings_representative_params_"))
-if(exists("settings_legend_params_show") && settings_legend_params_show == FALSE)
-  rm(list= ls(pattern = "settings_legend_params_"))
-if(exists("settings_additional_params_show") && settings_additional_params_show == FALSE)
-  rm(list= ls(pattern = "settings_additional_params_"))
-
 ##PBI_PARAM: Should warnings text be displayed?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
-showWarnings = TRUE 
+showWarnings = FALSE 
 if(exists("settings_additional_params_showWarnings"))
   showWarnings = settings_additional_params_showWarnings
 
@@ -250,12 +234,38 @@ if(exists("settings_labeling_params_percentile1"))
   skipLabel2points = max(skipLabel2points,1)
 }
 
+
+##PBI_PARAM: Sparsify dense regions of the scatter plot? Recommended for overcoming the overdraw and memory issues
+#Type:logical, Default:TRUE, Range:NA, PossibleValues:NA, Remarks: NA
+sparsify = TRUE 
+if(exists("settings_additional_params_sparsify"))
+  showWarnings = settings_additional_params_sparsify
+
+
 ##PBI_PARAM: pallete type for color of clusters
 #Type: string , Default:"rainbow",  Range:NA, PossibleValues:"rainbow", "terrain" etc,  Remarks: NA
-palleteType = "rainbow"
+palleteType = "qPBI"
 if(exists("settings_legend_params_palleteType"))
   palleteType = settings_legend_params_palleteType 
 
+
+##PBI_PARAM: export out data to HTML?
+#Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
+keepOutData = FALSE
+if(exists("settings_export_params_show"))
+  keepOutData = settings_export_params_show 
+
+##PBI_PARAM: method of export interface
+#Type: string , Default:"copy",  Range:NA, PossibleValues:"copy", "download",  Remarks: NA
+exportMethod = "copy"
+if(exists("settings_export_params_method"))
+  exportMethod = settings_export_params_method 
+
+##PBI_PARAM: limit the out table exported
+#Type: string , Default:1000,  Range:NA, PossibleValues:"1000", "10000", Inf,  Remarks: NA
+limitExportSize = 1000
+if(exists("settings_export_params_limitExportSize"))
+  limitExportSize = as.numeric(settings_export_params_limitExportSize)
 
 
 ###############Library Declarations###############
@@ -277,8 +287,25 @@ libraryRequireInstall("fpc")
 libraryRequireInstall("mclust")
 libraryRequireInstall("apcluster")
 libraryRequireInstall("vegan")
+libraryRequireInstall("Redmonder")
+libraryRequireInstall("caTools")
+
+
+############### Library Declarations ###############
+libraryRequireInstall("ggplot2");
+libraryRequireInstall("plotly")
+####################################################
+
 
 ###############Internal parameters definitions#################
+#PBI_PARAM Size of labels on axes
+sizeLabel = 11
+
+#PBI_PARAM Size of warnings font
+sizeWarn = 11
+
+#PBI_PARAM Size of ticks on axes 
+sizeTicks = 8
 
 ##PBI_PARAM: the random number generator (RNG) state for random number generation 
 #Type: numeric, Default:42, Range:NA, PossibleValues:NA, Remarks: NA
@@ -287,7 +314,7 @@ randSeed = 42
 
 ##PBI_PARAM: minimum required samples (rows in data table)
 #Type: positive integer, Default:8, Range:[5,100], PossibleValues:NA, Remarks: NA
-minSamplesToRun = 8
+minSamplesToRun = 12
 
 ##PBI_PARAM: maximum samples to use inside autoNumClusters function
 #Type: positive integer, Default:5000, Range:[100,10000], PossibleValues:NA, Remarks: NA
@@ -363,12 +390,23 @@ calcWSS<-function(mydata, maxClust = maxClusters)
   return(wss)
 }
 
-#plot convex hull
-plotCH<-function(xcoord, ycoord, lcolor){
+#plot CH in ggplot
+ggPlotCH = function (xcoord, ycoord, lcolor,ggp)
+{
+  
   hpts <- chull(x = xcoord, y = ycoord)
   hpts <- c(hpts, hpts[1])
-  lines(xcoord[hpts], ycoord[hpts], col = lcolor, lty = 3)
-}  
+  
+  x = as.numeric(xcoord[hpts])
+  y = as.numeric(ycoord[hpts])
+  D = data.frame(x = x, y = y)
+  
+  ggp <- ggp + geom_path(data = D, mapping = aes(x = x, y = y),colour = lcolor,  inherit.aes = FALSE, show.legend = FALSE)
+  return(ggp)
+  
+  
+}
+
 
 #get datapoints closest to centers 
 getDelegates<-function(orig_data, clean_data, cluster_centers)
@@ -464,7 +502,7 @@ autoNumClusters<-function(mydata, minClus = 2, maxClus = 15, methods = c(1:5), m
   
   nbclustIndexes<-c("db", "ratkowsky", "ball", "ccc", "scott", "marriot", "trcovw", "friedman", "rubin", "sdindex")
   singularityRisk<-allInds[c("ccc", "scott", "marriot", "trcovw", "friedman", "rubin","Calinski")]
- 
+  
   
   #remove methods that crash because of singularity (if singlarity found)
   if(length(intersect(methods, singularityRisk)) )
@@ -486,7 +524,7 @@ autoNumClusters<-function(mydata, minClus = 2, maxClus = 15, methods = c(1:5), m
   #2: robustElbow
   if(sum(methods == allInds["robustElbow"]))
   {
-  
+    
     tempNC<-findKnee(1:length(wss),wss)[1]
     recommend<-rbind(recommend, tempNC)
   }
@@ -550,11 +588,259 @@ myPallete = function(n=100,palleteType = "rainbow")
     mp = cm.colors(n+1)[-1] #remove white
   
   if(palleteType == "gray")
-    mp = gray(0:n/ n)
+    mp = gray(1:n/ n)
+  
+  if(palleteType == "qPBI" && n <= 10)
+    mp = redmonder.pal(n,"qPBI")
+  
+  if(palleteType == "qMSOStd"  && n <= 10)
+    mp = redmonder.pal(n,"qMSOStd")
   
   return(mp)
   
 }
+
+
+#ggplot points
+ggplotPoints = function(dfPoints, xla = "X", yla = "Y", with_ellipse = TRUE)
+{
+  
+  dfPoints= dfPoints[order(dfPoints$labels),]
+  
+  gg1 = ggplot(dfPoints, aes(x = xx,y = yy, colour = labels, labels = labels, alpha = labels, size = labels, shape = labels))
+  
+  gg1 = gg1 + geom_point() 
+  
+  
+  if(with_ellipse)
+    gg1 = gg1 + stat_ellipse(level = 0.75, show.legend = FALSE, size = 1,linetype = 2)
+  
+  
+  uniqueInd = !duplicated(dfPoints$labels) 
+  
+  
+  gg1 = gg1 + scale_colour_manual(name = "",
+                                  labels = dfPoints$labels[uniqueInd],
+                                  values = dfPoints$col[uniqueInd], 
+                                  breaks = dfPoints$labels[uniqueInd]) 
+  
+  gg1 = gg1 + scale_shape_manual(name = "",
+                                 labels = dfPoints$labels[uniqueInd],
+                                 values = dfPoints$shape[uniqueInd], 
+                                 breaks = dfPoints$labels[uniqueInd]) 
+  
+  gg1 = gg1 + scale_size_manual(name = "",
+                                labels = dfPoints$labels[uniqueInd],
+                                values = dfPoints$size[uniqueInd], 
+                                breaks = dfPoints$labels[uniqueInd]) 
+  
+  gg1 = gg1 + scale_alpha_manual(name = "",
+                                 labels = dfPoints$labels[uniqueInd],
+                                 values = dfPoints$alpha[uniqueInd], 
+                                 breaks = dfPoints$labels[uniqueInd])   
+  
+  
+  gg1 = gg1 + xlab(xla) + ylab(yla)
+  
+  print(gg1)
+  
+  
+  return(gg1)
+  
+}
+
+
+
+UpdateTextInPlotlyMarkers = function(p,usePoints,orig_dataset,mapOrig2markers, tooltips)
+{
+  if(!is.null(tooltips))
+  {
+    cnt1 = intersect(colnames(tooltips),colnames(orig_dataset))
+    if(length(cnt1))
+      tooltips[,cnt1] = NULL
+    
+    if(ncol(tooltips)>0)
+      orig_dataset = cbind(orig_dataset,tooltips)
+  }
+  # for each marker 
+  allColNames = colnames(orig_dataset)
+  usePointsIndexes = seq(1,nrow(orig_dataset))[usePoints]
+  
+  for (co in seq(1,ncol(orig_dataset)))
+    orig_dataset[,co] = as.character(orig_dataset[,co])
+  
+  # layers in p sorted as 1,10,11,12,2,...
+  charClusSort = as.numeric(sort(as.character(unique(mapOrig2markers$cluster))))
+  clusSort = sort(unique(mapOrig2markers$cluster))
+  
+  
+  
+  
+  for (pi in usePointsIndexes)
+  {
+    c1 = clusSort[charClusSort==mapOrig2markers$cluster[pi]]
+    i1 = mapOrig2markers$map[pi]
+    
+    tempText = paste(allColNames, "=",orig_dataset[pi,], sep =" ", collapse = "<br>")
+    
+    
+    p$x$data[[c1]]$text[i1] = tempText
+    
+    
+  }
+  
+  return(p)
+  
+}
+
+
+SparsifyMarkers <- function(p, usePoints, mapOrig2markers)
+{
+  for (cla in unique(mapOrig2markers$cluster))
+  {
+    iii = mapOrig2markers$map[mapOrig2markers$cluster == cla & !usePoints]
+    if(length(iii))
+    {
+      p$x$data[[cla]]$text = p$x$data[[cla]]$text[-iii]
+      p$x$data[[cla]]$x = p$x$data[[cla]]$x[-iii]
+      p$x$data[[cla]]$y = p$x$data[[cla]]$y[-iii]
+    }
+  }
+  
+  
+  
+  
+  return(p)
+}
+
+
+#randomly remove points from scatter if too many 
+SparsifyScatter = function (xyDataFrame, numXstrips = 8, numYstrips = 8, minMaxPoints = c(3000,10000), minmaxInStrip =  c(900,9000), maxInCell = 300, remDuplicated = TRUE)
+{
+  
+  N_big = N = nrow(xyDataFrame)
+  usePoints = rep(TRUE,N)
+  
+  if(N <= minMaxPoints[1]) # do nothing
+    return (usePoints)
+  
+  if(remDuplicated) # remove duplicated
+  {
+    usePoints = usePoints & (!duplicated(xyDataFrame))
+    N = sum(usePoints)
+  }
+  
+  if(N <= minMaxPoints[1]) # do nothing
+    return (usePoints)
+  
+  rangeX = range(xyDataFrame[,1])
+  rangeY = range(xyDataFrame[,2])
+  
+  gridX = seq(rangeX[1],rangeX[2], length.out = numXstrips + 1)
+  gridY = seq(rangeY[1],rangeY[2], length.out = numYstrips + 1)
+  
+  #go cell by cell and sparsify 
+  for (iX in seq(1,numXstrips))
+  {
+    smallRangeX = c(gridX[iX],gridX[iX+1])
+    inStrip = xyDataFrame[,1]>= smallRangeX[1] & xyDataFrame[,1]<= smallRangeX[2] &  usePoints
+    if(sum(inStrip) > minmaxInStrip[1])
+      for (iY in seq(1,numYstrips))
+      {
+        smallRangeY = c(gridY[iY],gridY[iY+1])
+        inCell = xyDataFrame[,2]>= smallRangeY[1] & xyDataFrame[,2]<= smallRangeY[2] &  inStrip
+        if(sum(inCell) > maxInCell)
+        {
+          inCellIndexes = seq(1,N_big)[inCell]
+          #randomly select maxInCell out of inCellIndexes
+          iii = sample(inCellIndexes,size = sum(inCell) - maxInCell, replace = FALSE)
+          usePoints[iii] = FALSE
+        }
+      }
+    
+  }
+  N = sum(usePoints)
+  
+  #if by the end still too many points --> go on whole set  
+  if(N > minMaxPoints[2])
+  {
+    inIndexes = seq(1,N_big)[usePoints]
+    #randomly select minMaxPoints[2] out of inIndexes
+    iii = sample(inIndexes,size = minMaxPoints[2], replace = FALSE)
+    usePoints[-iii] = FALSE
+    
+  }
+  
+  return (usePoints)
+  
+}
+
+
+goodPlotDimension = function(minWidthInch = 3,minHeightInch = 2.2)
+{
+  re = (par()$din[1] > minWidthInch) & (par()$din[2] > minHeightInch)
+  return(re)
+}
+
+
+ConvertDF64encoding = function (df, withoutEncoding = FALSE)
+{
+  header_row <- paste(names(df), collapse=", ")
+  tab <- apply(df, 1, function(x)paste(x, collapse=", "))
+  
+  if(withoutEncoding){
+    text <- paste(c(header_row, tab), collapse="\n")
+    x <- text
+  }
+  else
+  {
+    text <- paste(c(header_row, tab), collapse="\n")
+    x <- caTools::base64encode(text)
+  }
+  return(x)
+}
+
+
+KeepOutDataInHTML = function(df, htmlFile = 'out.html', exportMethod = "copy", limitExportSize = 1000)
+{
+  if(nrow(datasetBeforeScaling)>limitExportSize)
+    datasetBeforeScaling = datasetBeforeScaling[1:limitExportSize,]
+  
+  outDataString64 = ConvertDF64encoding(datasetBeforeScaling)
+  
+  linkElem = '\n<a href=""  download="data.csv"  style="position: absolute; top:0px; left: 0px; z-index: 20000;" id = "mydataURL">export</a>\n'
+  updateLinkElem = paste('<script>\n link_element = document.getElementById("mydataURL");link_element.href = outDataString64href;', '\n</script> ', sep =' ')
+  var64 = paste('<script> outDataString64 ="', outDataString64, '"; </script>', sep ="")
+  var64href = paste('<script> outDataString64href ="data:;base64,', outDataString64, '"; </script>', sep ="")
+  
+  buttonElem = '<button style="position: absolute; top:0px; left: 0px; z-index: 20000;"  onclick="myFunctionCopy(1)">copy to clipboard</button>'
+  funcScript = '<script> 
+  function myFunctionCopy(is64) 
+  {
+  const el = document.createElement("textarea");
+  if(is64)
+  {
+  el.value = atob(outDataString64);
+  }
+  else
+  {
+  el.value = outDataStringPlane;
+  }
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);};	
+  </script>'
+  
+  if(exportMethod == "copy")
+    endOfBody = paste(var64,funcScript, buttonElem,'\n</body>',sep ="")
+  else#"download"
+    endOfBody = paste(linkElem,var64, var64href,updateLinkElem,'\n</body>',sep ="")
+  
+  ReadFullFileReplaceString('out.html', 'out.html', '</body>', endOfBody)
+  
+}
+
 
 
 ###############Upfront input correctness validations (where possible)#################
@@ -570,31 +856,48 @@ orig_dataset <- dataset #used later for delegates
 # verify correctness of dataset
 useColumns<-sapply(dataset, correctColumn)
 
-if(showWarnings && sum(useColumns[-1])<ncol(dataset)-1)
-  pbiWarning<-"At least one of the columns was not numeric, or constant"
+if(sum(useColumns[-1])<ncol(dataset)-1)
+  pbiWarning<-cutStr2Show("At least one of the columns was not numeric, or constant",strCex = sizeWarn/6, partAvailable = 0.85)
 
 #exclude incopmatible columns
 dataset<-as.data.frame(dataset[,useColumns])
 nc<-ncol(dataset)
 nr<-nrow(dataset)
 maxClusters<-min(maxClusters, nr-1)
-checkDimiensionality<-TRUE
+checkDimiensionality = checkVisualSize = TRUE
 if(nc<2 || nr<minSamplesToRun)
 {
+  showWarnings = TRUE
   checkDimiensionality<-FALSE
-  if(showWarnings)
-    pbiWarning<-paste(pbiWarning, " Not enough input dimensions");
+  pbiWarning2 <- cutStr2Show("Not enough input dimensions", strCex = sizeWarn/6, partAvailable = 0.85)
+  pbiWarning <- paste(pbiWarning, "<br>", pbiWarning2);
 }
+
+#check if output window is large enough 
+if(!goodPlotDimension(minWidthInch = 3,minHeightInch = 2.2))
+{
+  showWarnings = TRUE
+  checkVisualSize<-FALSE
+  pbiWarning2 <- cutStr2Show("Visual size is too small", strCex = sizeWarn/12, partAvailable = 0.85)
+  pbiWarning <- paste(pbiWarning, "<br>", pbiWarning2);
+  
+}
+#addLegend, check if output window is small turn off the legend 
+if(!goodPlotDimension(minWidthInch = 5,minHeightInch = 3.5))
+  addLegend = FALSE
+
 
 ##############Main Visualization script###########
 
-
 set.seed(randSeed)
 
-if(!checkDimiensionality)
-{
-  plot.new()
+if(!checkDimiensionality || !checkVisualSize)
+{ 
+  gg = ggplot()    
 }else{
+  if(keepOutData)
+    datasetBeforeScaling = dataset
+  
   if(scaleData)
   {
     dataset<-as.data.frame(scale(dataset))
@@ -617,52 +920,61 @@ if(!checkDimiensionality)
   # KMEANS with known numberOfClusters
   cl <- kmeans(dataset, centers = numOfClusters, iter.max = iter.max, nstart = nstart)
   
-  numOfClusters = length(unique(cl$cluster))
-  drawColors<-myPallete(numOfClusters,palleteType = palleteType)
- 
-  # visualize first two coordinates 
+  numOfClusters <- length(unique(cl$cluster))
+  drawColors <- myPallete(numOfClusters,palleteType = palleteType)
+  
+  if(keepOutData)
+    datasetBeforeScaling$cluster = cl$cluster
+  
+  
   if(drawPoints) colpoints = drawColors[cl$cluster] else colpoints = NULL 
   
-  # in case of legend extend xlim to the right by 20%
-  xrange = range( dataset[, 1] )
-  drange = xrange[2] - xrange[1]
-  xlim = c(xrange[1] - 0.01*drange, xrange[2] + 0.01*drange + drange*0.20*addLegend)
   
- 
+  xLab = cutStr2Show(names(dataset)[1], strCex = sizeLabel/6, isH = TRUE, partAvailable = 0.8)
+  yLab = cutStr2Show(names(dataset)[2], strCex = sizeLabel/6, isH = FALSE, partAvailable = 0.8)
   
-  plot(dataset[, 1], dataset[, 2], col = alpha(colpoints, pointTransparency), pch = 19,
-       xlab = cutStr2Show(names(dataset)[1], strCex =1.1, isH = TRUE), 
-       ylab = cutStr2Show(names(dataset)[2], strCex =1.1, isH = FALSE), 
-       xlim = xlim, cex = pointMarkerSize)
   
-  leg<-paste("Cluster " ,seq(1, length.out  = numOfClusters))
-  pc<-rep(19, numOfClusters)
+  
+  
+  myl = factor(colpoints)
+  
+  levels(myl)=seq(1,length(levels(myl)))
+  
+  myl = paste("Cluster ", as.character(cl$cluster),sep="")
+  
+  names(colpoints) = myl
+  
+  NP = nrow(dataset)
+  df_points = data.frame(xx = dataset[, 1], yy = dataset[, 2], shape = rep(19,NP), 
+                         labels = myl, col = colpoints, alpha = rep(pointTransparency,NP), 
+                         size = rep(pointMarkerSize*2.5,NP), stringsAsFactors = FALSE)
+  
+  if(drawEllipse)
+    drawCenters = FALSE
+  
+  
   
   if(drawCenters)
   {
-    points(cl$centers, pch = 7, col = drawColors)
-    leg<-cbind(leg, paste("Cluster center " , seq(1, length.out  = numOfClusters)))
-    pc<-cbind(pc, rep(7, numOfClusters))
+    # wrong centroids numbers
+    df_centers = data.frame(xx = cl$centers[,1], yy = cl$centers[,2], shape = rep(7,numOfClusters), 
+                            labels = paste("Cluster center " , seq(1, length.out  = numOfClusters)), col = drawColors, alpha = rep(1,numOfClusters), 
+                            size = rep(pointMarkerSize*2.5,numOfClusters)) 
+    
+    df_points = rbind(df_points, df_centers)
   }
   
-  if(drawEllipse)
-  {
-    for(clustr in c(1:numOfClusters))
-    {
-      iii<-(cl$cluster == clustr)
-      if(sum(iii)>2)
-        dataEllipse(dataset[iii, 1], dataset[iii, 2], add = T, plot.points = F, levels = 0.85, col = drawColors[clustr], lwd = 1, 
-                    fill = TRUE, fill.alpha = 0.075, center.pch = NULL)
-    }
-  }
   
+  gg = ggplotPoints(df_points,xLab,yLab, with_ellipse = drawEllipse)
+  
+
   if(drawConvexHull)
   {
     for(clustr in c(1:numOfClusters))
     {
       iii<-(cl$cluster == clustr)
       if(sum(iii)>2)
-        plotCH(dataset[iii, 1], dataset[iii, 2],lcolor = drawColors[clustr])
+        gg = ggPlotCH (dataset[iii, 1], dataset[iii, 2],lcolor = drawColors[clustr],gg)
     }
   }
   
@@ -674,27 +986,138 @@ if(!checkDimiensionality)
     deleg <- getDelegates(orig_dataset, dataset, cl$centers)
     delegateText = abbreviate(apply(deleg, 1, toString), maxLenDelegate)
     delegateText = sapply(delegateText, cutStr2Show, strCex = delegateCex, partAvailable = 0.75)
-      
-    text(cl$centers[, c(1, 2)], 
-         delegateText,
-         col = "black", 
-         cex = delegateCex)
+    
+    
+    D = data.frame(xpos = cl$centers[, 1], ypos = cl$centers[, 2], alabels = delegateText, col = drawColors)
+    
+    gg = gg +
+      annotate(geom="text", x=D$xpos, y=D$ypos, label = D$alabels, size = 3*delegateCex,
+               colour = D$col)
+    
+    
   }
   
-  if(addLabel2points)
+  if(addLabel2points && transparencyLabel2points > 0.05)
   {
     iii=sample(1:nrow(dataset),max(1,floor(nrow(dataset)/skipLabel2points)))
-    text(x = dataset[iii, 1], y = dataset[iii, 2], labels = abbreviate(orig_dataset[iii,1],maxLenLabel2points),
-         col = alpha(colpoints[iii], transparencyLabel2points), cex = cexLabel2points)
+    alabels = abbreviate(orig_dataset[iii,1],maxLenLabel2points)
+    
+    D = data.frame(xpos = dataset[iii, 1], ypos = dataset[iii, 2], alabels = alabels, col = colpoints[iii], cex = rep(cexLabel2points,length(alabels)))
+    
+    gg = gg +
+      annotate(geom="text", x=D$xpos, y=D$ypos, label = D$alabels, size = 3*cexLabel2points,
+               alpha = transparencyLabel2points, colour = D$col)
+    
+    
+    
   }
   
-  if(addLegend && validateIfToShowLegend(numClust = numOfClusters, textSize = legendTextSize ))
-    legend("topright", legend = leg, pch = pc, col = alpha(drawColors, 1), cex = legendTextSize)
+  gg = gg + theme_bw()
+  
+  
+  
+  
   
 }
 
-if(showWarnings && !is.null(pbiWarning))
+if(!showWarnings)
+  pbiWarning = NULL
+
+gg = gg + labs (title = pbiWarning, caption = NULL) + theme_bw() +
+  theme(plot.title  = element_text(hjust = 0.5, size = 12),
+        axis.title=element_text(size =  sizeLabel),
+        axis.text=element_text(size =  sizeTicks),
+        panel.border = element_blank())
+
+if(!addLegend)
+  gg = gg +  theme(legend.position="none")
+
+
+
+# convert to plotly 
+p <- plotly_build(gg)
+
+if(is.null(pbiWarning))
 {
-  pbiWarning = cutStr2Show(pbiWarning, strCex = 0.8)
-  title(main = NULL, sub = pbiWarning, outer = FALSE, col.sub = "gray50", cex.sub = 0.8)
+  #map backward original dataset to p-object markers 
+  mapOrig2markers = data.frame(cluster = as.numeric(cl$cluster), map =seq(1,nrow(orig_dataset)))
+  
+  for (cla in seq(1,numOfClusters))
+  {
+    temp2 = (cl$cluster== cla)
+    mapOrig2markers$map[temp2] = seq(1,sum(temp2))
+  }
+  
+  
+  #sparsify original dataset  
+  if(sparsify)
+    usePoints = SparsifyScatter(dataset)
+  else
+    usePoints = SparsifyScatter(dataset,minMaxPoints = c(Inf,Inf))
+  
+  
+  if(!exists("Tooltips"))
+    Tooltips = NULL
+  
+  #update text: p$x$data[[1]]$text,..., p$x$data[[numCluster]]$text
+  p <- UpdateTextInPlotlyMarkers(p,usePoints,orig_dataset,mapOrig2markers,Tooltips)
+  
+  
+  # remove markers from dense regions (x,y,text is removed) to make html object smaller
+  p <- SparsifyMarkers(p, usePoints, mapOrig2markers)
+  
+  
+  # if centroids' text 
+  if(drawCenters)
+  {#layer 
+    cluCh= sort(as.character(1:numOfClusters))
+    for (i in seq(numOfClusters+1,2*numOfClusters))
+      p$x$data[[i]]$text = paste("Cluster center ", cluCh[i - numOfClusters], sep ="")
+  }
+  
+  
+  # re-design plotly object, make sure no extra legend elements (like ellipses) 
+  numLayers = length(p$x$data) 
+  for (lay in seq(1,numLayers))
+  {
+    if(p$x$data[[lay]]$mode!= "markers")
+      p$x$data[[lay]]$showlegend = FALSE
+    
+    if(p$x$data[[lay]]$mode == "lines")
+      p$x$data[[lay]]$text = NULL
+    
+    if(p$x$data[[lay]]$mode == "text")
+      p$x$data[[lay]]$hoverinfo = 'none'
+  }
+  
 }
+############# Create and save widget ###############
+
+
+
+disabledButtonsList <- list('toImage', 'sendDataToCloud', 'zoom2d', 'pan', 'pan2d', 'select2d', 'lasso2d', 'hoverClosestCartesian', 'hoverCompareCartesian')
+p$x$config$modeBarButtonsToRemove = disabledButtonsList
+p <- config(p, staticPlot = FALSE, editable = FALSE, sendData = FALSE, showLink = FALSE,
+            displaylogo = FALSE,  collaborate = FALSE, cloud=FALSE)
+
+
+internalSaveWidget(p, 'out.html')
+
+# resolve bug in plotly (margin of 40 px)
+ReadFullFileReplaceString('out.html', 'out.html', ',"padding":40,', ',"padding":0,')
+
+if(keepOutData)
+  KeepOutDataInHTML(df = datasetBeforeScaling, htmlFile = 'out.html', exportMethod = exportMethod, limitExportSize = limitExportSize)
+  
+
+  ####################################################
+  
+  #display in R studio
+  # DEBUG
+  # if(Sys.getenv("RSTUDIO")!="")
+  # {
+  #   print(p)
+  #   print(gg)
+  # }
+  
+  

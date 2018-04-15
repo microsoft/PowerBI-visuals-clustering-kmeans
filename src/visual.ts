@@ -24,64 +24,84 @@
  *  THE SOFTWARE.
  */
 module powerbi.extensibility.visual {
-    
+
+
+    // in order to improve the performance, one can update the <head> only in the initial rendering.
+    // set to 'true' if you are using different packages to create the widgets
+    const updateHTMLHead: boolean = false;
+    const renderVisualUpdateType: number[] = [VisualUpdateType.Resize, VisualUpdateType.ResizeEnd, VisualUpdateType.Resize + VisualUpdateType.ResizeEnd];
+
+
+    //user edit START: interface objects
     interface VisualSettingsPreprocessingParams {//data preprocessing
-        show: boolean;
-        scaleData: boolean;      
-        applyPCA: boolean;            
+        scaleData: boolean;
+        applyPCA: boolean;
     }
 
-     interface VisualSettingsClusterNumParams {//clustering algo
-        show: boolean;
+    interface VisualSettingsClusterNumParams {//clustering algo
+      
         numOfClusters: string;
         numClustersMethods: string;
+    }
 
-     }
 
-     interface VisualSettingsVizParams {//appearance 
-        show: boolean;
+
+    interface VisualSettingsVizParams {//appearance 
+        // show: boolean;
         drawEllipse: boolean;
         drawConvexHull: boolean;
         drawCentroid: boolean;
-        percentile: number; 
+        percentile: number; //TODO: percentage
         weight: number;
-       
-     }
-     interface VisualSettingsLabelingParams {//points labeling 
-        show: boolean;
-         textSize: number; 
-         percentile: number; 
-         maxLenPointLabel: number;
-         percentile1: number; 
 
-     }
-      interface VisualSettingsRepresentativeParams {//representative labeling 
+    }
+    interface VisualSettingsLabelingParams {//points labeling 
         show: boolean;
-        textSize: number; 
+        //addLabel2points: boolean;
+        textSize: number; //TODO: textSize
+        //cexLabel2points: number; //TODO: textSize
+        percentile: number; //TODO: percentage
+        maxLenPointLabel: number;
+        percentile1: number; //TODO: percentage
+
+    }
+    interface VisualSettingsRepresentativeParams {//representative labeling 
+        show: boolean;
+        textSize: number;
         maxLenDelegateLabel: number;
+    }
 
-     }
-     interface VisualSettingsLegendParams {//legend and pallete 
+    interface VisualSettingsLegendParams {//legend and pallete 
         show: boolean;
         addLegend: boolean;
-        palleteType: string; 
+        palleteType: string;
+    }
+	
+    interface VisualSettingsAdditionalParams {//additional settings 
+        //show: boolean;
+        sparsify: boolean;
+        minClusters: number;
+        maxClusters: number;
+        maxIter: number;
+        nStart: number;
+    }
 
-     }
-     interface VisualSettingsAdditionalParams {//additional settings 
+    interface VisualSettingsExportParams {//additional settings 
         show: boolean;
-         showWarnings: boolean;
-         minClusters: number;
-         maxClusters: number;
-         maxIter: number;
-         nStart: number;
-     }
+        limitExportSize: string;  
+        method: string;
+    }
 
-    
 
     export class Visual implements IVisual {
-        private imageDiv: HTMLDivElement;
-        private imageElement: HTMLImageElement;
+        //    private imageDiv: HTMLDivElement;
+        //   private imageElement: HTMLImageElement;
+        //HTML
+        private rootElement: HTMLElement;
+        private headNodes: Node[];
+        private bodyNodes: Node[];
 
+         //user edit START: declare private variables
         private settings_prepocessing_params: VisualSettingsPreprocessingParams;
         private settings_clusterNum_params: VisualSettingsClusterNumParams;
         private settings_viz_params: VisualSettingsVizParams;
@@ -89,67 +109,79 @@ module powerbi.extensibility.visual {
         private settings_representative_params: VisualSettingsRepresentativeParams;
         private settings_legend_params: VisualSettingsLegendParams;
         private settings_additional_params: VisualSettingsAdditionalParams;
-      
+        private settings_export_params: VisualSettingsExportParams;
+
 
         public constructor(options: VisualConstructorOptions) {
-            this.imageDiv = document.createElement('div');
-            this.imageDiv.className = 'rcv_autoScaleImageContainer';
-            options.element.appendChild(this.imageDiv);
-            
-            this.imageElement = document.createElement('img');
-            this.imageElement.className = 'rcv_autoScaleImage';
+            if(options && options.element)
+                this.rootElement = options.element;
 
-            this.imageDiv.appendChild(this.imageElement);
 
-             this.settings_prepocessing_params = <VisualSettingsPreprocessingParams>{
-                show: false,
-                 scaleData: false,
-                 applyPCA: false,
+            this.headNodes = [];
+            this.bodyNodes = [];
+
+
+            //user edit START: default parameters
+            this.settings_prepocessing_params = <VisualSettingsPreprocessingParams>{
+                // show: false,
+                scaleData: false,
+                applyPCA: false,
             };
+
             this.settings_clusterNum_params = <VisualSettingsClusterNumParams>{
-                show: false,
+                //   show: false,
                 numOfClusters: "auto",
-                numClustersMethods: "fast",
+                numClustersMethods: "fast"
             };
+
             this.settings_viz_params = <VisualSettingsVizParams>{
-                show: false,
+                //show: false,
                 drawEllipse: false,
                 drawConvexHull: false,
                 drawCentroid: false,
                 percentile: 40,
-                weight: 10,
+                weight: 10
             };
+
             this.settings_labeling_params = <VisualSettingsLabelingParams>{
                 show: true,
-                textSize: 8, 
-                percentile: 80, 
+                textSize: 8,
+                percentile: 80,
                 maxLenPointLabel: 5,
-                percentile1: 100 
+                percentile1: 100
             };
+
             this.settings_representative_params = <VisualSettingsRepresentativeParams>{
                 show: false,
-                textSize: 8, 
+                textSize: 8,
                 maxLenDelegateLabel: 30
-                
             };
+
             this.settings_legend_params = <VisualSettingsLegendParams>{
                 show: true,
                 addLegend: true,
-                palleteType: "rainbow"
-                
+                palleteType: "qPBI"
             };
+
             this.settings_additional_params = <VisualSettingsAdditionalParams>{
-                show: false,
-                showWarnings: true,
+                // show: false,
+                sparsify: true,
                 minClusters: 2,
                 maxClusters: 12,
                 maxIter: 10,
-                nStart: 5,
+                nStart: 5
             };
-            
+            this.settings_export_params = <VisualSettingsExportParams>{
+                show: false,
+                limitExportSize: "10000",
+                method:"copy"
+            };
         }
 
         public update(options: VisualUpdateOptions) {
+            if (!options || !options.type || !options.viewport)
+                return;
+
             let dataViews: DataView[] = options.dataViews;
             if (!dataViews || dataViews.length === 0)
                 return;
@@ -158,207 +190,295 @@ module powerbi.extensibility.visual {
             if (!dataView || !dataView.metadata)
                 return;
 
-            this.settings_prepocessing_params = <VisualSettingsPreprocessingParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'show', false),
-                scaleData: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'scaleData', false),              
-                applyPCA: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'applyPCA',false),
-            };
 
-            this.settings_clusterNum_params= <VisualSettingsClusterNumParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_clusterNum_params', 'show', false),
-                numOfClusters: getValue<string>(dataView.metadata.objects, 'settings_clusterNum_params', 'numOfClusters',"auto"),
-                numClustersMethods: getValue<string>(dataView.metadata.objects, 'settings_clusterNum_params', 'numClustersMethods',"fast"),
-            };
-            this.settings_viz_params = <VisualSettingsVizParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'show', false),
-                drawEllipse: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'drawEllipse', false),
-                drawConvexHull: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'drawConvexHull', false),
-                drawCentroid: getValue<boolean>(dataView.metadata.objects, 'settings_viz_params', 'drawCentroid', false),
-                percentile: getValue<number>(dataView.metadata.objects, 'settings_viz_params', 'percentile',40),
-                weight: getValue<number>(dataView.metadata.objects, 'settings_viz_params', 'weight',10),
-            };
+            this.updateObjects(dataView.metadata.objects);
 
-            this.settings_labeling_params = <VisualSettingsLabelingParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_labeling_params', 'show', true),
-                textSize: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'textSize',8),
-                percentile: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'percentile',100),
-                maxLenPointLabel: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'maxLenPointLabel',5),
-                percentile1: getValue<number>(dataView.metadata.objects, 'settings_labeling_params', 'percentile1',100),
-            };
-            this.settings_representative_params = <VisualSettingsRepresentativeParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_representative_params', 'show', false),  
-                textSize: getValue<number>(dataView.metadata.objects, 'settings_representative_params', 'textSize', 8),
-                maxLenDelegateLabel: getValue<number>(dataView.metadata.objects, 'settings_representative_params', 'maxLenDelegateLabel', 30)
-
-            };
-            this.settings_legend_params = <VisualSettingsLegendParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_legend_params', 'show', true),
-                addLegend: getValue<boolean>(dataView.metadata.objects, 'settings_legend_params', 'addLegend', true),
-                palleteType: getValue<string>(dataView.metadata.objects, 'settings_legend_params', 'palleteType', "rainbow"),
-            };
-
-            this.settings_additional_params = <VisualSettingsAdditionalParams> {
-                show: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'show', false),
-                showWarnings: getValue<boolean>(dataView.metadata.objects, 'settings_additional_params', 'showWarnings', true),
-                minClusters: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'minClusters', 2),
-                maxClusters: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'maxClusters', 12),
-                maxIter: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'maxIter', 10),
-                nStart: getValue<number>(dataView.metadata.objects, 'settings_additional_params', 'nStart', 5),
-            };
-      
-           
-
-            let imageUrl: string = null;
+            let payloadBase64: string = null;
             if (dataView.scriptResult && dataView.scriptResult.payloadBase64) {
-                imageUrl = "data:image/png;base64," + dataView.scriptResult.payloadBase64;
+                payloadBase64 = dataView.scriptResult.payloadBase64;
             }
 
-            if (imageUrl) {
-                this.imageElement.src = imageUrl;
-            } else {
-                this.imageElement.src = null;
+            if (renderVisualUpdateType.indexOf(options.type) === -1) {
+                if (payloadBase64) {
+                    this.injectCodeFromPayload(payloadBase64);
+                }
             }
-
+            
             this.onResizing(options.viewport);
         }
 
         public onResizing(finalViewport: IViewport): void {
-            this.imageDiv.style.height = finalViewport.height + 'px';
-            this.imageDiv.style.width = finalViewport.width + 'px';
+            /* add code to handle resizing of the view port */
         }
 
+      private injectCodeFromPayload(payloadBase64: string): void {
+            // Inject HTML from payload, created in R
+            // the code is injected to the 'head' and 'body' sections.
+            // if the visual was already rendered, the previous DOM elements are cleared
+
+            ResetInjector();
+
+            if (!payloadBase64) 
+                return
+
+            // create 'virtual' HTML, so parsing is easier
+            let el: HTMLHtmlElement = document.createElement('html');
+            try {
+                el.innerHTML = window.atob(payloadBase64);
+            } catch (err) {
+                return;
+            }
+
+            // if 'updateHTMLHead == false', then the code updates the header data only on the 1st rendering
+            // this option allows loading and parsing of large and recurring scripts only once.
+            if (updateHTMLHead || this.headNodes.length === 0) {
+                while (this.headNodes.length > 0) {
+                    let tempNode: Node = this.headNodes.pop();
+                    document.head.removeChild(tempNode);
+                }
+                let headList: NodeListOf<HTMLHeadElement> = el.getElementsByTagName('head');
+                if (headList && headList.length > 0) {
+                    let head: HTMLHeadElement = headList[0];
+                    this.headNodes = ParseElement(head, document.head);
+                }
+            }
+
+            // update 'body' nodes, under the rootElement
+            while (this.bodyNodes.length > 0) {
+                let tempNode: Node = this.bodyNodes.pop();
+                this.rootElement.removeChild(tempNode);
+            }
+            let bodyList: NodeListOf<HTMLBodyElement> = el.getElementsByTagName('body');
+            if (bodyList && bodyList.length > 0) {
+                let body: HTMLBodyElement = bodyList[0];
+                this.bodyNodes = ParseElement(body, this.rootElement);
+            }
+
+            RunHTMLWidgetRenderer();
+        }
+
+
+        /**
+         * This function gets called by the update function above. You should read the new values of the properties into 
+         * your settings object so you can use the new value in the enumerateObjectInstances function below.
+         * 
+         * Below is a code snippet demonstrating how to expose a single property called "lineColor" from the object called "settings"
+         * This object and property should be first defined in the capabilities.json file in the objects section.
+         * In this code we get the property value from the objects (and have a default value in case the property is undefined)
+         */
+        public updateObjects(objects: DataViewObjects) {
+           //user edit START: update params
+            this.settings_prepocessing_params = <VisualSettingsPreprocessingParams>{
+                // show: getValue<boolean>(dataView.metadata.objects, 'settings_prepocessing_params', 'show', false),
+                scaleData: getValue<boolean>(objects, 'settings_prepocessing_params', 'scaleData', false),
+                applyPCA: getValue<boolean>(objects, 'settings_prepocessing_params', 'applyPCA', false),
+            };
+
+            this.settings_clusterNum_params = <VisualSettingsClusterNumParams>{
+                //  show: getValue<boolean>(objects, 'settings_clusterNum_params', 'show', false),
+                numOfClusters: getValue<string>(objects, 'settings_clusterNum_params', 'numOfClusters', "auto"),
+                numClustersMethods: getValue<string>(objects, 'settings_clusterNum_params', 'numClustersMethods', "fast"),
+            };
+            this.settings_viz_params = <VisualSettingsVizParams>{
+                //show: getValue<boolean>(objects, 'settings_viz_params', 'show', false),
+                drawEllipse: getValue<boolean>(objects, 'settings_viz_params', 'drawEllipse', false),
+                drawConvexHull: getValue<boolean>(objects, 'settings_viz_params', 'drawConvexHull', false),
+                drawCentroid: getValue<boolean>(objects, 'settings_viz_params', 'drawCentroid', false),
+                percentile: getValue<number>(objects, 'settings_viz_params', 'percentile', 40),
+                weight: getValue<number>(objects, 'settings_viz_params', 'weight', 10),
+            };
+
+            this.settings_labeling_params = <VisualSettingsLabelingParams>{
+                show: getValue<boolean>(objects, 'settings_labeling_params', 'show', true),
+                //addLabel2points: getValue<boolean>(objects, 'settings_labeling_params', 'addLabel2points',false),
+                textSize: getValue<number>(objects, 'settings_labeling_params', 'textSize', 8),
+                percentile: getValue<number>(objects, 'settings_labeling_params', 'percentile', 100),
+                maxLenPointLabel: getValue<number>(objects, 'settings_labeling_params', 'maxLenPointLabel', 5),
+                percentile1: getValue<number>(objects, 'settings_labeling_params', 'percentile1', 100),
+            };
+            this.settings_representative_params = <VisualSettingsRepresentativeParams>{
+                show: getValue<boolean>(objects, 'settings_representative_params', 'show', false),
+                //addLabel2clusterDelegate: getValue<boolean>(objects, 'settings_representative_params', 'addLabel2clusterDelegate', false),  
+                textSize: getValue<number>(objects, 'settings_representative_params', 'textSize', 8),
+                maxLenDelegateLabel: getValue<number>(objects, 'settings_representative_params', 'maxLenDelegateLabel', 30)
+
+            };
+            this.settings_legend_params = <VisualSettingsLegendParams>{
+                show: getValue<boolean>(objects, 'settings_legend_params', 'show', true),
+                addLegend: getValue<boolean>(objects, 'settings_legend_params', 'addLegend', true),
+                palleteType: getValue<string>(objects, 'settings_legend_params', 'palleteType', "qPBI"),
+            };
+
+            this.settings_additional_params = <VisualSettingsAdditionalParams>{
+                //show: getValue<boolean>(objects, 'settings_additional_params', 'show', false),
+                sparsify: getValue<boolean>(objects, 'settings_additional_params', 'sparsify', true),
+                minClusters: getValue<number>(objects, 'settings_additional_params', 'minClusters', 2),
+                maxClusters: getValue<number>(objects, 'settings_additional_params', 'maxClusters', 12),
+                maxIter: getValue<number>(objects, 'settings_additional_params', 'maxIter', 10),
+                nStart: getValue<number>(objects, 'settings_additional_params', 'nStart', 5),
+            };
+            this.settings_export_params = <VisualSettingsExportParams>{
+                //show: getValue<boolean>(objects, 'settings_additional_params', 'show', false),
+                show: getValue<boolean>(objects, 'settings_export_params', 'show', false),
+                limitExportSize: getValue<string>(objects, 'settings_export_params', 'limitExportSize', '10000'),
+                method:getValue<string>(objects, 'settings_export_params', 'method', 'copy')
+            };
+            //user edit END: update params
+        }
+        
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
             let objectName = options.objectName;
             let objectEnumeration = [];
 
-            switch(objectName) {
+            switch (objectName) {
                 case 'settings_prepocessing_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings_prepocessing_params.show,
+                            // show: this.settings_prepocessing_params.show,
                             scaleData: this.settings_prepocessing_params.scaleData,
                             applyPCA: this.settings_prepocessing_params.applyPCA,
-                            
-                         },
+
+                        },
                         selector: null
                     });
                     break;
-                    
-                    case 'settings_clusterNum_params':
-                    if(this.settings_clusterNum_params.numOfClusters=="auto")
-                    {
-                    objectEnumeration.push({
-                        objectName: objectName,
-                        properties: {
-                            show: this.settings_clusterNum_params.show,
-                            numOfClusters: this.settings_clusterNum_params.numOfClusters,
-                            numClustersMethods:ifStringReturnStringClustersMethod(this.settings_clusterNum_params.numClustersMethods, this.settings_clusterNum_params.numOfClusters)
-                         },
-                        selector: null
-                    });
+
+                case 'settings_clusterNum_params':
+                    if (this.settings_clusterNum_params.numOfClusters == "auto") {
+                        objectEnumeration.push({
+                            objectName: objectName,
+                            properties: {
+                                // show: this.settings_clusterNum_params.show,
+                                numOfClusters: this.settings_clusterNum_params.numOfClusters,
+                                numClustersMethods: ifStringReturnStringClustersMethod(this.settings_clusterNum_params.numClustersMethods, this.settings_clusterNum_params.numOfClusters)
+                            },
+                            selector: null
+                        });
                     }
-                    else
-                    {
-                       objectEnumeration.push({
-                        objectName: objectName,
-                        properties: {
-                            show: this.settings_clusterNum_params.show,
-                            numOfClusters: this.settings_clusterNum_params.numOfClusters,
-                         },
-                        selector: null
-                    });
-
-
+                    else {
+                        objectEnumeration.push({
+                            objectName: objectName,
+                            properties: {
+                                //  show: this.settings_clusterNum_params.show,
+                                numOfClusters: this.settings_clusterNum_params.numOfClusters,
+                            },
+                            selector: null
+                        });
                     }
                     break;
-                    
-                    
 
-                    case 'settings_viz_params':
+
+
+                case 'settings_viz_params':
+
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings_viz_params.show,
-                            drawEllipse: this.settings_viz_params.drawEllipse,
-                            drawConvexHull: this.settings_viz_params.drawConvexHull,
-                            drawCentroid: this.settings_viz_params.drawCentroid,
+                            // show: this.settings_viz_params.show,
                             percentile: this.settings_viz_params.percentile,
-                            weight: this.settings_viz_params.weight
-                         },
+                            weight: this.settings_viz_params.weight,
+                            drawEllipse: this.settings_viz_params.drawEllipse,
+                            drawConvexHull: this.settings_viz_params.drawConvexHull
+                            // drawCentroid: this.settings_viz_params.drawCentroid,
+
+                        },
                         selector: null
                     });
+                    if (!this.settings_viz_params.drawEllipse) {
+                        objectEnumeration.push({
+                            objectName: objectName,
+                            properties: {
+                                drawCentroid: this.settings_viz_params.drawCentroid
+                            },
+                            selector: null
+                        });
+
+                    }
+
                     break;
-                    case 'settings_labeling_params':
+                case 'settings_labeling_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings_labeling_params.show,                   
+                            show: this.settings_labeling_params.show,
                             textSize: this.settings_labeling_params.textSize,
                             percentile: this.settings_labeling_params.percentile,
                             maxLenPointLabel: inMinMax(this.settings_labeling_params.maxLenPointLabel, 1, 100),
                             percentile1: inMinMax(this.settings_labeling_params.percentile1, 0, 100)
-                         },
+                        },
                         selector: null
                     });
                     break;
-                    case 'settings_representative_params':
+                case 'settings_representative_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
                             show: this.settings_representative_params.show,
+                            //addLabel2clusterDelegate: this.settings_representative_params.addLabel2clusterDelegate,
                             textSize: this.settings_representative_params.textSize,
                             maxLenDelegateLabel: inMinMax(this.settings_representative_params.maxLenDelegateLabel, 1, 100),
-                         },
+                        },
                         selector: null
                     });
                     break;
-                    case 'settings_legend_params':
+                case 'settings_legend_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
                             show: this.settings_legend_params.show,
                             addLegend: this.settings_legend_params.addLegend,
                             palleteType: this.settings_legend_params.palleteType
-                         },
+                        },
                         selector: null
                     });
                     break;
-                    case 'settings_additional_params':
-                     if(this.settings_clusterNum_params.numOfClusters=="auto")
-                    {
+
+                case 'settings_additional_params':
+                    if (this.settings_clusterNum_params.numOfClusters == "auto") {
+                        objectEnumeration.push({
+                            objectName: objectName,
+                            properties: {
+                                //show: this.settings_additional_params.show,
+                              
+                                minClusters: inMinMax(this.settings_additional_params.minClusters, 1, 15),
+                                maxClusters: inMinMax(this.settings_additional_params.maxClusters, this.settings_additional_params.minClusters, 15),
+
+                                maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
+                                nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
+                                 sparsify: this.settings_additional_params.sparsify
+                            },
+                            selector: null
+                        });
+                    }
+                    else {
+                        objectEnumeration.push({
+                            objectName: objectName,
+                            properties: {
+                                // show: this.settings_additional_params.show,
+                                maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
+                                nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
+                                sparsify: this.settings_additional_params.sparsify
+                            },
+                            selector: null
+                        });
+                    }
+                    break;
+                    case 'settings_export_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
-                            show: this.settings_additional_params.show,
-                            showWarnings: this.settings_additional_params.showWarnings,
-                          
-                            minClusters: inMinMax(this.settings_additional_params.minClusters, 1, 15),
-                            maxClusters: inMinMax(this.settings_additional_params.maxClusters, this.settings_additional_params.minClusters, 15),
-                          
-                            maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
-                             nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
-                         },
+                            show: this.settings_export_params.show,
+                            limitExportSize: this.settings_export_params.limitExportSize,
+                            method: this.settings_export_params.method
+                        },
                         selector: null
                     });
-                    }
-                    else
-                    {
-                      objectEnumeration.push({
-                        objectName: objectName,
-                        properties: {
-                            show: this.settings_additional_params.show,
-                            showWarnings: this.settings_additional_params.showWarnings,   
-                            maxIter: inMinMax(this.settings_additional_params.maxIter, 1, 100),
-                             nStart: inMinMax(this.settings_additional_params.nStart, 1, 100),
-                         },
-                        selector: null
-                    });  
-                    }
                     break;
-                    
-            };
 
+
+            };
+            //user edit END: populate GUI
             return objectEnumeration;
         }
     }
