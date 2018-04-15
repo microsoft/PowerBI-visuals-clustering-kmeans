@@ -394,7 +394,6 @@ module powerbi.extensibility.visual {
                             },
                             selector: null
                         });
-
                     }
 
                     break;
