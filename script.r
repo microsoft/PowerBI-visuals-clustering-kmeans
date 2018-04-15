@@ -248,6 +248,11 @@ palleteType = "qPBI"
 if(exists("settings_legend_params_palleteType"))
   palleteType = settings_legend_params_palleteType 
 
+#PBI_PARAM Size of labels on axes
+sizeLabel = 12
+
+#PBI_PARAM Size of warnings font
+sizeWarn = 11
 
 ##PBI_PARAM: export out data to HTML?
 #Type:logical, Default:FALSE, Range:NA, PossibleValues:NA, Remarks: NA
@@ -389,6 +394,24 @@ calcWSS<-function(mydata, maxClust = maxClusters)
                                              centers = i)$withinss)
   return(wss)
 }
+
+#plot CH in ggplot
+ggPlotCH = function (xcoord, ycoord, lcolor,ggp)
+{
+  
+  hpts <- chull(x = xcoord, y = ycoord)
+  hpts <- c(hpts, hpts[1])
+  
+  x = as.numeric(xcoord[hpts])
+  y = as.numeric(ycoord[hpts])
+  D = data.frame(x = x, y = y)
+  
+  ggp <- ggp + geom_path(data = D, mapping = aes(x = x, y = y),colour = lcolor,  inherit.aes = FALSE, show.legend = FALSE)
+  return(ggp)
+  
+  
+}
+
 
 #plot CH in ggplot
 ggPlotCH = function (xcoord, ycoord, lcolor,ggp)
@@ -673,20 +696,13 @@ UpdateTextInPlotlyMarkers = function(p,usePoints,orig_dataset,mapOrig2markers, t
   charClusSort = as.numeric(sort(as.character(unique(mapOrig2markers$cluster))))
   clusSort = sort(unique(mapOrig2markers$cluster))
   
-  
-  
-  
   for (pi in usePointsIndexes)
   {
     c1 = clusSort[charClusSort==mapOrig2markers$cluster[pi]]
     i1 = mapOrig2markers$map[pi]
     
     tempText = paste(allColNames, "=",orig_dataset[pi,], sep =" ", collapse = "<br>")
-    
-    
     p$x$data[[c1]]$text[i1] = tempText
-    
-    
   }
   
   return(p)
@@ -706,10 +722,6 @@ SparsifyMarkers <- function(p, usePoints, mapOrig2markers)
       p$x$data[[cla]]$y = p$x$data[[cla]]$y[-iii]
     }
   }
-  
-  
-  
-  
   return(p)
 }
 
@@ -979,6 +991,9 @@ if(!checkDimiensionality || !checkVisualSize)
   }
   
   
+  
+  
+  
   if(addLabel2clusterDelegate)
   {
     clean_data = dataset
@@ -1013,10 +1028,6 @@ if(!checkDimiensionality || !checkVisualSize)
   }
   
   gg = gg + theme_bw()
-  
-  
-  
-  
   
 }
 
@@ -1092,7 +1103,6 @@ if(is.null(pbiWarning))
   
 }
 ############# Create and save widget ###############
-
 
 
 disabledButtonsList <- list('toImage', 'sendDataToCloud', 'zoom2d', 'pan', 'pan2d', 'select2d', 'lasso2d', 'hoverClosestCartesian', 'hoverCompareCartesian')

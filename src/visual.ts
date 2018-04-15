@@ -112,6 +112,7 @@ module powerbi.extensibility.visual {
         private settings_export_params: VisualSettingsExportParams;
 
 
+
         public constructor(options: VisualConstructorOptions) {
             if(options && options.element)
                 this.rootElement = options.element;
