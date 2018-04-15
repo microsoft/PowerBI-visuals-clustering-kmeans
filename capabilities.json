@@ -1,351 +1,440 @@
 {
-  "dataRoles": [
+  "dataRoles": [{
+      "displayName": "ID",
+      "description": "Unique identifier, used to prevent removal of identical rows(optional)",
+      "kind": "GroupingOrMeasure",
+      "name": "ID"
+    },
     {
       "displayName": "Values",
       "description": "Add two or more numeric columns",
-      "kind": "Grouping",
+      "kind": "GroupingOrMeasure",
       "name": "Values"
-    }, 
+    },
     {
       "displayName": "Data point labels",
       "description": "Short label(text or numeric) for each data point (optional)",
       "kind": "GroupingOrMeasure",
       "name": "PointLabels"
+    },
+    {
+      "displayName": "Tooltips",
+      "kind": "GroupingOrMeasure",
+      "description": "More fields to be used as mouseover tooltips",
+      "name": "Tooltips"
     }
   ],
-  "dataViewMappings": [
-    {
-      "conditions": [
-           { "Values": { "max": 1000 }, "PointLabels": { "max": 1 } }
-      ],
-      "scriptResult": {
-        "dataInput": {
-          "table": {
-            "rows": {
-                "select": [
-                { "for": { "in": "Values" } },
-                { "for": { "in": "PointLabels" } }
-              ],
-              "dataReductionAlgorithm": {
-                "top": { }
+  "dataViewMappings": [{
+    "conditions": [{
+      "ID": {
+        "max": 1
+      },
+      "Values": {
+        "max": 10
+      },
+      "PointLabels": {
+        "max": 1
+      },
+      "Tooltips": {
+        "max": 2
+      }
+    }],
+    "scriptResult": {
+      "dataInput": {
+        "table": {
+          "rows": {
+            "select": [{
+                "for": {
+                  "in": "ID"
+                }
+              },
+              {
+                "for": {
+                  "in": "Values"
+                }
+              },
+              {
+                "for": {
+                  "in": "PointLabels"
+                }
+              },
+              {
+                "for": {
+                  "in": "Tooltips"
+                }
               }
+            ],
+            "dataReductionAlgorithm": {
+              "top": {}
             }
           }
+        }
+      },
+      "script": {
+        "scriptProviderDefault": "R",
+        "scriptOutputType": "html",
+        "source": {
+          "objectName": "rcv_script",
+          "propertyName": "source"
         },
-        "script": {
-          "scriptProviderDefault": "R",
-          "scriptOutputType": "png",
-          "source": {
-            "objectName": "rcv_script",
-            "propertyName": "source"
-          },
-          "provider": {
-            "objectName": "rcv_script",
-            "propertyName": "provider"
-          }
+        "provider": {
+          "objectName": "rcv_script",
+          "propertyName": "provider"
         }
       }
     }
-  ],
+  }],
   "objects": {
     "rcv_script": {
       "properties": {
         "provider": {
-          "type": { "text": true }
+          "type": {
+            "text": true
+          }
         },
         "source": {
           "type": {
-            "scripting": { "source": true }
+            "scripting": {
+              "source": true
+            }
           }
         }
       }
     },
-    "settings_prepocessing_params":{
-        "displayName": "Data preprocessing",
-        "properties": {
-           "show": {
-                "type": {"bool": true}
-            },
-         "scaleData":{
-            "displayName": "Scale data",
-            "description": "Used to standardize the range of features of data",
-            "type": {
-              "bool": true
-            }
-          },
-           "applyPCA":{
-            "displayName": "Apply PCA",
-            "description": "Recommended for data with more than two dimensions",
-            "type": {
-              "bool": true
-            }
+    "settings_prepocessing_params": {
+      "displayName": "Data preprocessing",
+      "properties": {
+        "scaleData": {
+          "displayName": "Scale data",
+          "description": "Used to standardize the range of features of data",
+          "type": {
+            "bool": true
+          }
+        },
+        "applyPCA": {
+          "displayName": "Apply PCA",
+          "description": "Recommended for data with more than two dimensions",
+          "type": {
+            "bool": true
           }
         }
+      }
     },
-      "settings_clusterNum_params":{
-        "displayName": "Parameters for clusters definition",
-        "description": "Allows you to tune the number of clusters",
-        "properties": {
-          "show": {
-                "type": {"bool": true}
-            },
-          "numOfClusters":{
-            "displayName": "Number of clusters",
-            "type": {
-                "enumeration": [
-                  {
-                    "displayName": "auto",
-                    "value": "auto"
-                  },
-                  {
-                    "displayName": "2",
-                    "value": "2"
-                  },
-                   {
-                    "displayName": "3",
-                    "value": "3"
-                  },
-                  {
-                    "displayName": "4",
-                    "value": "4"
-                  },
-                   {
-                    "displayName": "5",
-                    "value": "5"
-                  },
-                  {
-                    "displayName": "6",
-                    "value": "6"
-                  },
-                   {
-                    "displayName": "7",
-                    "value": "7"
-                  },
-                  {
-                    "displayName": "8",
-                    "value": "8"
-                  },
-                   {
-                    "displayName": "9",
-                    "value": "9"
-                  },
-                   {
-                    "displayName": "10",
-                    "value": "10"
-                  },
-                  {
-                    "displayName": "11",
-                    "value": "11"
-                  },
-                   {
-                    "displayName": "12",
-                    "value": "12"
-                  }
-                ]
+    "settings_clusterNum_params": {
+      "displayName": "Clusters definition",
+      "description": "Allows you to tune the number of clusters",
+      "properties": {
+        "numOfClusters": {
+          "displayName": "Number of clusters",
+          "type": {
+            "enumeration": [{
+                "displayName": "auto",
+                "value": "auto"
+              },
+              {
+                "displayName": "2",
+                "value": "2"
+              },
+              {
+                "displayName": "3",
+                "value": "3"
+              },
+              {
+                "displayName": "4",
+                "value": "4"
+              },
+              {
+                "displayName": "5",
+                "value": "5"
+              },
+              {
+                "displayName": "6",
+                "value": "6"
+              },
+              {
+                "displayName": "7",
+                "value": "7"
+              },
+              {
+                "displayName": "8",
+                "value": "8"
+              },
+              {
+                "displayName": "9",
+                "value": "9"
+              },
+              {
+                "displayName": "10",
+                "value": "10"
+              },
+              {
+                "displayName": "11",
+                "value": "11"
+              },
+              {
+                "displayName": "12",
+                "value": "12"
               }
-          },
-          "numClustersMethods": {
-              "displayName": "Method",
-              "description": "Select a method to automate the number of clusters displayed",
-              "type": {
-                "enumeration": [
-                  {
-                    "displayName": "moderate",
-                    "value": "moderate"
-                  },
-                   {
-                    "displayName": "slow",
-                    "value": "slow"
-                  },
-                  {
-                    "displayName": "fast",
-                    "value": "fast"
-                  }
-                ]
+            ]
+          }
+        },
+        "numClustersMethods": {
+          "displayName": "Method",
+          "description": "Select a method automate the number of clusters displayed",
+          "type": {
+            "enumeration": [{
+                "displayName": "moderate",
+                "value": "moderate"
+              },
+              {
+                "displayName": "slow",
+                "value": "slow"
+              },
+              {
+                "displayName": "fast",
+                "value": "fast"
               }
-            }
-        }
-    },
-    "settings_viz_params":{
-        "displayName": "Visual appearance of clustering",
-        "properties": {
-          "show": {
-                "type": {"bool": true}
-            },
-             "drawEllipse":{
-            "displayName": "Draw ellipse",
-            "type": {
-              "bool": true
-            }
-          },
-          "drawConvexHull":{
-            "displayName": "Draw convex hull",
-            "type": {
-              "bool": true
-            }
-          }, 
-          "drawCentroid":{
-            "displayName": "Draw centroid",
-            "type": {
-              "bool": true
-            }
-          },
-          "percentile":{
-            "displayName": "Point opacity",
-            "type": {
-              "numeric": true
-            }
-          },
-          "weight":{
-            "displayName": "Point size",
-            "type": {
-              "numeric": true
-            }
+            ]
           }
         }
+      }
     },
-    "settings_labeling_params":{
-        "displayName": "Points labeling",
-        "properties": {
-          "show": {
-                "type": {"bool": true}
-            },
-               
-          "textSize":{
-            "displayName": "Font size",
-            "type": {
-              "numeric": true
-            }
-          },
-          "percentile":{
-            "displayName": "Label opacity",
-            "type": {
-              "numeric": true
-            }
-          },
-          "maxLenPointLabel":{
-            "displayName": "Limit label length",
-            "description": "Abbreviate labels to a limited length",
-            "type": {
-              "numeric": true
-            }
-          },
-          "percentile1":{
-            "displayName": "Percentage of points labeled",
-            "description": "Avoids cluttering text",
-            "type": {
-              "numeric": true
-            }
-          }       
+    "settings_viz_params": {
+      "displayName": "Visual appearance",
+      "properties": {
+        "drawEllipse": {
+          "displayName": "Draw ellipse",
+          "description": "Requires at least four points",
+          "type": {
+            "bool": true
+          }
+        },
+        "drawConvexHull": {
+          "displayName": "Draw convex hull",
+          "type": {
+            "bool": true
+          }
+        },
+        "drawCentroid": {
+          "displayName": "Draw centroid",
+          "type": {
+            "bool": true
+          }
+        },
+        "percentile": {
+          "displayName": "Point opacity",
+          "type": {
+            "numeric": true
+          }
+        },
+        "weight": {
+          "displayName": "Point size",
+          "type": {
+            "numeric": true
+          }
         }
+      }
     },
-    "settings_representative_params":{
-        "displayName": "Cluster representative labeling",
-        "description": "Add a label to the typical representative of each cluster",
-        "properties": {
-          "show": {
-                "type": {"bool": true}
-            }, 
-            "textSize":{
-            "displayName": "Font size",
-            "type": {
-              "numeric": true
-            }
-          },
-
-          "maxLenDelegateLabel":{
-            "displayName": "Limit label length",
-             "description": "Abbreviate labels to a limited length",
-            "type": {
-              "numeric": true
-            }
-          }  
-
-
+    "settings_labeling_params": {
+      "displayName": "Points labeling",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "textSize": {
+          "displayName": "Font size",
+          "type": {
+            "numeric": true
+          }
+        },
+        "percentile": {
+          "displayName": "Label opacity",
+          "type": {
+            "numeric": true
+          }
+        },
+        "maxLenPointLabel": {
+          "displayName": "Limit label length",
+          "description": "Abbreviate labels to a limited length",
+          "type": {
+            "numeric": true
+          }
+        },
+        "percentile1": {
+          "displayName": "Percentage of points labeled",
+          "description": "Avoids cluttering text",
+          "type": {
+            "numeric": true
+          }
         }
+      }
     },
-    "settings_legend_params":{
-        "displayName": "Legend",
-         "description": "Parameters for the clustering plot legend",
-        "properties": {
-          "show": {
-                "type": {"bool": true}
-            }, 
-            "palleteType": {
-              "displayName": "Pallete type",
-              "description": "Color pallete type",
-              "type": {
-                "enumeration": [
-                  {
-                    "displayName": "rainbow",
-                    "value": "rainbow"
-                  },
-                  {
-                    "displayName": "gray",
-                    "value": "gray"
-                  },
-                   {
-                    "displayName": "cm",
-                    "value": "cm"
-                  },
-                   {
-                    "displayName": "topo",
-                    "value": "topo"
-                  },
-                   {
-                    "displayName": "terrain",
-                    "value": "terrain"
-                  },
-                   {
-                    "displayName": "heat",
-                    "value": "heat"
-                  }
-                ]
+    "settings_representative_params": {
+      "displayName": "Cluster representative labeling",
+      "description": "Add a label to the typical representative of each cluster",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "textSize": {
+          "displayName": "Font size",
+          "type": {
+            "numeric": true
+          }
+        },
+        "maxLenDelegateLabel": {
+          "displayName": "Limit label length",
+          "description": "Abbreviate labels to a limited length",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    },
+    "settings_legend_params": {
+      "displayName": "Legend",
+      "description": "Parameters for the clustering plot legend",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "palleteType": {
+          "displayName": "Pallete type",
+          "description": "Color pallete type",
+          "type": {
+            "enumeration": [{
+                "displayName": "rainbow",
+                "value": "rainbow"
+              },
+              {
+                "displayName": "qPBI",
+                "value": "qPBI"
+              },
+              {
+                "displayName": "qMSOStd",
+                "value": "qMSOStd"
+              },
+              {
+                "displayName": "gray",
+                "value": "gray"
+              },
+              {
+                "displayName": "cm",
+                "value": "cm"
+              },
+              {
+                "displayName": "topo",
+                "value": "topo"
+              },
+              {
+                "displayName": "terrain",
+                "value": "terrain"
+              },
+              {
+                "displayName": "heat",
+                "value": "heat"
               }
-            } 
+            ]
+          }
         }
+      }
     },
-    "settings_additional_params":{
-        "displayName": "Additional clustering parameters",
-        "description": "Advanced parameters",
-        "properties": {
-          "show": {
-                "type": {"bool": true}
-            },
-          "showWarnings":{
-            "displayName": "Show warnings",
-            "type": {  "bool": true}
-          },
-          "minClusters":{
-            "displayName": "Minimum clusters",
-            "description": "Minimum clusters to search with auto-clusters",
-            "type": {
-              "numeric": true
-            }
-          },
-          "maxClusters":{
-            "displayName": "Maximum clusters",
-            "description": "Maximum clusters to search with auto-clusters",
-            "type": {
-              "numeric": true
-            }
-          },  
-          "maxIter":{
-            "displayName": "Maximum iterations",
-            "description": "The maximum number of iterations allowed",
-            "type": {
-              "numeric": true
-            }
-          },  
-          "nStart":{
-            "displayName": "Number of initializations",
-            "description": "Number of random initialziations for k-means clustering",
-            "type": {
-              "numeric": true
-            }
-          }  
+    "settings_additional_params": {
+      "displayName": "Advanced",
+      "description": "Additional clustering parameters",
+      "properties": {
+        "sparsify": {
+          "displayName": "Sparsify",
+          "description": "Sparsify dense regions of the scatter plot. Recommended for overcoming the overdraw and memory issues. Has no effect on clustering results.",
+          "type": {
+            "bool": true
+          }
+        },
+        "minClusters": {
+          "displayName": "Minimum clusters",
+          "description": "Minimum clusters to search with auto-clusters",
+          "type": {
+            "numeric": true
+          }
+        },
+        "maxClusters": {
+          "displayName": "Maximum clusters",
+          "description": "Maximum clusters to search with auto-clusters",
+          "type": {
+            "numeric": true
+          }
+        },
+        "maxIter": {
+          "displayName": "Maximum iterations",
+          "description": "Maximum iterations to convergence of k-means clustering",
+          "type": {
+            "numeric": true
+          }
+        },
+        "nStart": {
+          "displayName": "Number of initializations",
+          "description": "Number of random initialziations for k-means clustering",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    },
+    "settings_export_params": {
+      "displayName": "Export data",
+      "description": "Export result of clustering",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "limitExportSize": {
+          "displayName": "Maximum exported rows",
+          "description": "Limit number of rows",
+          "type": {
+            "enumeration": [{
+                "displayName": "1000",
+                "value": "1000"
+              },
+              {
+                "displayName": "10000",
+                "value": "10000"
+              },
+              {
+                "displayName": "50000",
+                "value": "50000"
+              },
+              {
+                "displayName": "unlimited",
+                "value": "100000"
+              }
+            ]
+          }
+        },
+        "method": {
+          "displayName": "Method",
+          "description": "Method",
+          "type": {
+            "enumeration": [{
+                "displayName": "copy to clipboard",
+                "value": "copy"
+              },
+              {
+                "displayName": "download (only service)",
+                "value": "download"
+              }
+            ]
+          }
         }
     }
+  }
   },
   "suppressDefaultTitle": true
 }

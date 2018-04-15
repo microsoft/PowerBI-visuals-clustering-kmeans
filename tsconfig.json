@@ -8,8 +8,9 @@
     "out": "./.tmp/build/visual.js"
   },
   "files": [
-    ".api/v1.2.0/PowerBI-visuals.d.ts",
-     "src/objectEnumerationUtility.ts",
+   ".api/v1.7.0/PowerBI-visuals.d.ts",
+    "src/htmlInjectionUtility.ts",
+    "src/objectEnumerationUtility.ts",
     "src/visual.ts"
   ]
 }
