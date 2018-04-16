@@ -128,30 +128,29 @@ ReadFullFileReplaceString <- function(fnameIn, fnameOut, sourceString,targetStri
   writeLines(tx2, con = fnameOut)
 }
 
-encodeOneFileaAsString = function (myFile)
-{
-  # MAX_SIZE = 10^9
-  # #read as Bin
-  # connectRD = file(myFile, "rb")
-  # print('before readbin')
-  # myBinData = readBin(connectRD, raw(), n = MAX_SIZE)
-  # close.connection(con = connectRD)
-  # print('before base64encode')
-  # #encode as string 
-  # stringData = base64encode(myBinData)
-  stringData = "Q29sMSwgQ29sMiwgQ29sMywgQ29sNApNYWxlLCAgMTIzNDUsICA3NiwgYWJjCkZlbWFsZSwgNTQ1NDU0LCAxMDUsIGRlZg=="
-  return(stringData)
-}
+# encodeOneFileaAsString = function (myFile)
+# {
+#   # MAX_SIZE = 10^9
+#   # #read as Bin
+#   # connectRD = file(myFile, "rb")
+#   # print('before readbin')
+#   # myBinData = readBin(connectRD, raw(), n = MAX_SIZE)
+#   # close.connection(con = connectRD)
+#   # print('before base64encode')
+#   # #encode as string 
+#   # stringData = base64encode(myBinData)
+#   return(stringData)
+# }
 
-getStringOf64encoding <- function(indataframe)
-{
-  print('in getStringOf64encoding')
-  browser()
-  fileName = "myTempRCV.csv"
-  write.csv(indataframe, file = fileName, sep =",")
-  mystr = encodeOneFileaAsString(fileName)
-  
-}
+# getStringOf64encoding <- function(indataframe)
+# {
+#   print('in getStringOf64encoding')
+#   browser()
+#   fileName = "myTempRCV.csv"
+#   write.csv(indataframe, file = fileName, sep =",")
+#   mystr = encodeOneFileaAsString(fileName)
+#   
+# }
 
 #################################################
 
