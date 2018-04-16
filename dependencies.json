@@ -1,6 +1,11 @@
 {
   "cranPackages": [
     {
+      "name": "base64enc",
+      "displayName": "base64enc: This package provides tools for handling base64 encoding.",
+      "url": "https://cran.r-project.org/web/packages/base64enc/index.html"
+    },
+    {
       "name": "nloptr",
       "displayName": "nloptr: R interface to NLopt",
       "url": "https://cran.r-project.org/web/packages/nloptr/index.html"
