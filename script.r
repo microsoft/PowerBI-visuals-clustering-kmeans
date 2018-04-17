@@ -1106,8 +1106,3 @@ ReadFullFileReplaceString('out.html', 'out.html', ',"padding":40,', ',"padding":
 
 if(keepOutData)
   KeepOutDataInHTML(df = datasetBeforeScaling, htmlFile = 'out.html', exportMethod = exportMethod, limitExportSize = limitExportSize)
-  
-
- 
-  
-  
