@@ -28,7 +28,6 @@ module powerbi.extensibility.visual {
   "use strict";
 
   import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
-
   // returns value in range 
   export function inMinMax(aNumber: number, minNumber: number, maxNumber: number) {
     if (aNumber < minNumber)
