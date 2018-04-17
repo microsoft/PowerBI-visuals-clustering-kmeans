@@ -3,7 +3,7 @@
     {
       "displayName": "Values",
       "description": "Add two or more numeric columns",
-      "kind": "Grouping",
+      "kind": "GroupingOrMeasure",
       "name": "Values"
     },
     {
@@ -11,57 +11,81 @@
       "description": "Short label(text or numeric) for each data point (optional)",
       "kind": "GroupingOrMeasure",
       "name": "PointLabels"
-    }
-  ],
-  "dataViewMappings": [
+    },
     {
-      "conditions": [
-        {
-          "Values": {
-            "max": 1000
-          },
-          "PointLabels": {
-            "max": 1
-          }
-        }
-      ],
-      "scriptResult": {
-        "dataInput": {
-          "table": {
-            "rows": {
-              "select": [
-                {
-                  "for": {
-                    "in": "Values"
-                  }
-                },
-                {
-                  "for": {
-                    "in": "PointLabels"
-                  }
+      "displayName": "Tooltips",
+      "kind": "GroupingOrMeasure",
+      "description": "More fields to be used as mouseover tooltips",
+      "name": "Tooltips"
+    },
+    {
+    "displayName": "ID",
+    "description": "Unique identifier, used to prevent removal of identical rows(optional)",
+    "kind": "GroupingOrMeasure",
+    "name": "ID"
+     }
+  ],
+  "dataViewMappings": [{
+    "conditions": [{
+      "Values": {
+        "max": 10
+      },
+      "PointLabels": {
+        "max": 1
+      },
+      "Tooltips": {
+        "max": 2
+      },
+      "ID": {
+        "max": 1
+      }
+    }],
+    "scriptResult": {
+      "dataInput": {
+        "table": {
+          "rows": {
+            "select": [
+              {
+                "for": {
+                  "in": "Values"
                 }
-              ],
-              "dataReductionAlgorithm": {
-                "top": {}
+              },
+              {
+                "for": {
+                  "in": "PointLabels"
+                }
+              },
+              {
+                "for": {
+                  "in": "Tooltips"
+                }
+              },
+              {
+                "for": {
+                  "in": "ID"
+                }
               }
+            ],
+            "dataReductionAlgorithm": {
+              "top": {}
             }
           }
+        }
+      },
+      "script": {
+        "scriptProviderDefault": "R",
+        "scriptOutputType": "html",
+        "source": {
+          "objectName": "rcv_script",
+          "propertyName": "source"
         },
-        "script": {
-          "scriptProviderDefault": "R",
-          "scriptOutputType": "html",
-          "source": {
-            "objectName": "rcv_script",
-            "propertyName": "source"
-          },
-          "provider": {
-            "objectName": "rcv_script",
-            "propertyName": "provider"
-          }
+        "provider": {
+          "objectName": "rcv_script",
+          "propertyName": "provider"
         }
       }
     }
-  ],
+  }],
   "objects": {
     "rcv_script": {
       "properties": {
@@ -99,14 +123,13 @@
       }
     },
     "settings_clusterNum_params": {
-      "displayName": "Parameters for clusters definition",
+      "displayName": "Clusters definition",
       "description": "Allows you to tune the number of clusters",
       "properties": {
         "numOfClusters": {
           "displayName": "Number of clusters",
           "type": {
-            "enumeration": [
-              {
+            "enumeration": [{
                 "displayName": "auto",
                 "value": "auto"
               },
@@ -161,8 +184,7 @@
           "displayName": "Method",
           "description": "Select a method automate the number of clusters displayed",
           "type": {
-            "enumeration": [
-              {
+            "enumeration": [{
                 "displayName": "moderate",
                 "value": "moderate"
               },
@@ -180,7 +202,7 @@
       }
     },
     "settings_viz_params": {
-      "displayName": "Visual appearance of clustering",
+      "displayName": "Visual appearance",
       "properties": {
         "drawEllipse": {
           "displayName": "Draw ellipse",
@@ -288,8 +310,7 @@
           "displayName": "Pallete type",
           "description": "Color pallete type",
           "type": {
-            "enumeration": [
-              {
+            "enumeration": [{
                 "displayName": "rainbow",
                 "value": "rainbow"
               },
@@ -327,8 +348,8 @@
       }
     },
     "settings_additional_params": {
-      "displayName": "Additional clustering parameters",
-      "description": "Advanced parameters",
+      "displayName": "Advanced",
+      "description": "Additional clustering parameters",
       "properties": {
         "sparsify": {
           "displayName": "Sparsify",
@@ -363,6 +384,55 @@
           "description": "Number of random initialziations for k-means clustering",
           "type": {
             "numeric": true
+          }
+        }
+      }
+    },
+    "settings_export_params": {
+      "displayName": "Export data",
+      "description": "Export result of clustering",
+      "properties": {
+        "show": {
+          "type": {
+            "bool": true
+          }
+        },
+        "limitExportSize": {
+          "displayName": "Maximum exported rows",
+          "description": "Limit number of rows",
+          "type": {
+            "enumeration": [{
+                "displayName": "1000",
+                "value": "1000"
+              },
+              {
+                "displayName": "10000",
+                "value": "10000"
+              },
+              {
+                "displayName": "50000",
+                "value": "50000"
+              },
+              {
+                "displayName": "unlimited",
+                "value": "100000"
+              }
+            ]
+          }
+        },
+        "method": {
+          "displayName": "Method",
+          "description": "Method",
+          "type": {
+            "enumeration": [{
+                "displayName": "copy to clipboard",
+                "value": "copy"
+              },
+              {
+                "displayName": "download (only service)",
+                "value": "download"
+              }
+            ]
           }
         }
       }
