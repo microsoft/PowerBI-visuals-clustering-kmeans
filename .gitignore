@@ -9,9 +9,6 @@ dist
 
 
 assets/clustering_custom_RV_HTML_testing.pbix
-out.html
-out.html.tmp
-out.html.tmp
 
 temp.csv
 temp.html
@@ -21,10 +18,4 @@ try.html
 .Rhistory
 
 myTempRCV.csv
-out.html
-out.html.tmp
-myTempRCV.csv
-out.html
-out.*
-out.html_files/*
-out.html_files
+
