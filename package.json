@@ -13,6 +13,9 @@
     "lint": "tslint -r \"node_modules/tslint-microsoft-contrib\" \"+(src|test)/**/*.ts\""
   },
   "devDependencies": {
-    "powerbi-visuals-utils-dataviewutils": "1.2.0"
+    "powerbi-visuals-utils-dataviewutils": "1.2.0",
+    "tslint": "^4.4.2",
+    "tslint-microsoft-contrib": "^4.0.0",
+    "powerbi-visuals-tools": "1.10.0"
   }
 }
