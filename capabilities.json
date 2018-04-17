@@ -1,10 +1,5 @@
 {
-  "dataRoles": [{
-      "displayName": "ID",
-      "description": "Unique identifier, used to prevent removal of identical rows(optional)",
-      "kind": "GroupingOrMeasure",
-      "name": "ID"
-    },
+  "dataRoles": [
     {
       "displayName": "Values",
       "description": "Add two or more numeric columns",
@@ -22,13 +17,16 @@
       "kind": "GroupingOrMeasure",
       "description": "More fields to be used as mouseover tooltips",
       "name": "Tooltips"
-    }
+    },
+    {
+    "displayName": "ID",
+    "description": "Unique identifier, used to prevent removal of identical rows(optional)",
+    "kind": "GroupingOrMeasure",
+    "name": "ID"
+     }
   ],
   "dataViewMappings": [{
     "conditions": [{
-      "ID": {
-        "max": 1
-      },
       "Values": {
         "max": 10
       },
@@ -37,17 +35,16 @@
       },
       "Tooltips": {
         "max": 2
+      },
+      "ID": {
+        "max": 1
       }
     }],
     "scriptResult": {
       "dataInput": {
         "table": {
           "rows": {
-            "select": [{
-                "for": {
-                  "in": "ID"
-                }
-              },
+            "select": [
               {
                 "for": {
                   "in": "Values"
@@ -61,6 +58,11 @@
               {
                 "for": {
                   "in": "Tooltips"
+                }
+              },
+              {
+                "for": {
+                  "in": "ID"
                 }
               }
             ],

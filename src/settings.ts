@@ -55,7 +55,6 @@ export function ifStringReturnStringClustersMethod(numClustersMethods:string , n
 
 
    export class VisualSettings extends DataViewObjectsParser {
-      //public rcv_script: rcv_scriptSettings = new rcv_scriptSettings();
       public settings_prepocessing_params: settings_prepocessing_params = new settings_prepocessing_params();
       public settings_clusterNum_params: settings_clusterNum_params = new settings_clusterNum_params();
       public settings_viz_params: settings_viz_params = new settings_viz_params();
@@ -112,9 +111,5 @@ export function ifStringReturnStringClustersMethod(numClustersMethods:string , n
         public limitExportSize: string =  "10000";
         public method: string = "copy";
       }
-    // export class rcv_scriptSettings {
-    //  // undefined
-    //   public provider     // undefined
-    //   public source     }
 
 }
