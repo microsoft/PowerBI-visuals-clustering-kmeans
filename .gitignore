@@ -6,8 +6,7 @@ dist
 .api
 .api/*
 *.log
-.RData
-.Rhistory
+
 
 assets/clustering_custom_RV_HTML_testing.pbix
 out.html
@@ -18,10 +17,12 @@ temp.csv
 temp.html
 try.html
 
-.Rhistory
-.Rhistory
+
 myTempRCV.csv
 out.html
 out.html.tmp
 myTempRCV.csv
 out.html
+out.*
+out.html_files/*
+out.html_files
