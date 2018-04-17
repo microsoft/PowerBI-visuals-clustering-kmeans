@@ -29,7 +29,6 @@ module powerbi.extensibility.visual {
 
   import DataViewObjectsParser = powerbi.extensibility.utils.dataview.DataViewObjectsParser;
 
-
   // returns value in range 
   export function inMinMax(aNumber: number, minNumber: number, maxNumber: number) {
     if (aNumber < minNumber)
@@ -41,16 +40,12 @@ module powerbi.extensibility.visual {
 
   // update param of clustering based on another param
   export function ifStringReturnStringClustersMethod(numClustersMethods: string, numOfClusters: string) {
-    if (numOfClusters != "auto")
-      return "None"
-
-    if (numOfClusters == "auto" && numClustersMethods == "None")
-      return "fast"
-
+    if (numOfClusters !== "auto")
+      return "None";
+    if (numOfClusters === "auto" && numClustersMethods === "None")
+      return "fast";
     return numClustersMethods;
   }
-
-
 
   export class VisualSettings extends DataViewObjectsParser {
     public settings_prepocessing_params: settings_prepocessing_params = new settings_prepocessing_params();

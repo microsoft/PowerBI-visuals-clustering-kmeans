@@ -150,14 +150,10 @@ module powerbi.extensibility.visual {
         }
 
         /** 
-         * This function gets called for each of the objects defined in the capabilities files and allows you to select which of the 
-         * objects and properties you want to expose to the users in the property pane.
-         * 
-         */
-        // public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions):
-        //     VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
-        //     return VisualSettings.enumerateObjectInstances(this.settings || VisualSettings.getDefault(), options);
-        // }
+        * This function gets called for each of the objects defined in the capabilities files and allows you to select which of the 
+        * objects and properties you want to expose to the users in the property pane.
+        * 
+        */
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
             let objectName = options.objectName;
             let objectEnumeration = [];
@@ -176,11 +172,10 @@ module powerbi.extensibility.visual {
                     break;
 
                 case 'settings_clusterNum_params':
-                    if (this.settings.settings_clusterNum_params.numOfClusters == "auto") {
+                    if (this.settings.settings_clusterNum_params.numOfClusters === "auto") {
                         objectEnumeration.push({
                             objectName: objectName,
                             properties: {
-                                // show: this.settings.settings_clusterNum_params.show,
                                 numOfClusters: this.settings.settings_clusterNum_params.numOfClusters,
                                 numClustersMethods: ifStringReturnStringClustersMethod(this.settings.settings_clusterNum_params.numClustersMethods, this.settings.settings_clusterNum_params.numOfClusters)
                             },
@@ -245,7 +240,6 @@ module powerbi.extensibility.visual {
                         objectName: objectName,
                         properties: {
                             show: this.settings.settings_representative_params.show,
-                            //addLabel2clusterDelegate: this.settings.settings_representative_params.addLabel2clusterDelegate,
                             textSize: this.settings.settings_representative_params.textSize,
                             maxLenDelegateLabel: inMinMax(this.settings.settings_representative_params.maxLenDelegateLabel, 1, 100),
                         },
@@ -265,18 +259,15 @@ module powerbi.extensibility.visual {
                     break;
 
                 case 'settings_additional_params':
-                    if (this.settings.settings_clusterNum_params.numOfClusters == "auto") {
+                    if (this.settings.settings_clusterNum_params.numOfClusters === "auto") {
                         objectEnumeration.push({
                             objectName: objectName,
                             properties: {
-                                //show: this.settings.settings_additional_params.show,
-                              
                                 minClusters: inMinMax(this.settings.settings_additional_params.minClusters, 1, 15),
                                 maxClusters: inMinMax(this.settings.settings_additional_params.maxClusters, this.settings.settings_additional_params.minClusters, 15),
-
                                 maxIter: inMinMax(this.settings.settings_additional_params.maxIter, 1, 100),
                                 nStart: inMinMax(this.settings.settings_additional_params.nStart, 1, 100),
-                                 sparsify: this.settings.settings_additional_params.sparsify
+                                sparsify: this.settings.settings_additional_params.sparsify
                             },
                             selector: null
                         });
@@ -294,7 +285,7 @@ module powerbi.extensibility.visual {
                         });
                     }
                     break;
-                    case 'settings_export_params':
+                case 'settings_export_params':
                     objectEnumeration.push({
                         objectName: objectName,
                         properties: {
@@ -305,10 +296,7 @@ module powerbi.extensibility.visual {
                         selector: null
                     });
                     break;
-
-
             };
-            //user edit END: populate GUI
             return objectEnumeration;
         }
     }
