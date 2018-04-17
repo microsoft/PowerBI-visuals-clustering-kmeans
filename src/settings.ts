@@ -31,13 +31,13 @@ module powerbi.extensibility.visual {
 
 
   // returns value in range 
-  export function inMinMax(a: number, mi: number, ma: number)
+  export function inMinMax(aNumber: number, minNumber: number, maxNumber: number)
   {
-      if(a<mi)
-          return mi;
-      if(a>ma)
-          return ma;
-      return a;
+      if(aNumber < minNumber)
+          return minNumber;
+      if(aNumber > maxNumber)
+          return maxNumber;
+      return aNumber;
   }
 
 // update param of clustering based on another param
