@@ -37,18 +37,6 @@
 source('./r_files/flatten_HTML.r')
 
 
-
-#DEBUG
-fileRda = "C:/Users/boefraty/projects/PBI/R/tempData.Rda"
-if(file.exists(dirname(fileRda)))
-{
-  if(Sys.getenv("RSTUDIO")!="")
-    load(file= fileRda)
-  else
-    save(list = ls(all.names = TRUE), file=fileRda)
-}
-
-
 options(warn = -1)
 
 if(!exists("dataset") && exists("Values"))
@@ -1120,14 +1108,6 @@ if(keepOutData)
   KeepOutDataInHTML(df = datasetBeforeScaling, htmlFile = 'out.html', exportMethod = exportMethod, limitExportSize = limitExportSize)
   
 
-  ####################################################
-  
-  #display in R studio
-  # DEBUG
-  # if(Sys.getenv("RSTUDIO")!="")
-  # {
-  #   print(p)
-  #   print(gg)
-  # }
+ 
   
   
